@@ -12,8 +12,13 @@ export const LoginSignUp: Component<LoginSignUpProps> = (props) => {
   const [password, setPassword] = createSignal("");
 
   return (
-    <div class="flex flex-col gap-2" classList={{ ...props.classList }}>
+    <div
+      class="flex flex-col gap-[1.5em] px-[1ch] py-[1.5em] bg-gray-100"
+      classList={{ ...props.classList }}
+    >
+      <div>drawnotes</div>
       <TextInput
+        type="email"
         placeholder="email"
         value={email()}
         onInput={(e) => {
@@ -21,13 +26,14 @@ export const LoginSignUp: Component<LoginSignUpProps> = (props) => {
         }}
       />
       <TextInput
+        type="password"
         placeholder="password"
         value={password()}
         onInput={(e) => {
           setPassword(e.target.value);
         }}
       />
-      <div class="flex flex-row">
+      <div class="flex flex-row justify-between">
         <Button
           onClick={() => {
             signIn(email(), password());

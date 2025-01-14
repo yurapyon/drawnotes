@@ -1,8 +1,19 @@
 import { createAuthClient } from "better-auth/solid";
 
+function getBaseUrl() {
+  if (typeof window !== "undefined") {
+    return "";
+  }
+
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+
+  return `http://localhost:${process.env.PORT ?? 3000}`;
+}
+
 export const authClient = createAuthClient({
-  // TODO
-  baseURL: "http://localhost:3000",
+  baseURL: getBaseUrl(),
 });
 
 export const signIn = async (email: string, password: string) => {

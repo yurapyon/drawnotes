@@ -4,12 +4,17 @@ import {
   createCommandSlice,
   createCommandSliceAPI,
 } from "./slices/command";
-import { Note, Image } from "@prisma/client";
+import { Image } from "@prisma/client";
+import {
+  createNoteSlice,
+  createNoteSliceAPI,
+  NoteSliceAPI,
+} from "./slices/note";
 
 export interface DataStoreAPI {
   commands: CommandSliceAPI;
   currentNote: string | null;
-  notes: Note[];
+  notes: NoteSliceAPI;
   images: Image[];
 }
 
@@ -17,7 +22,7 @@ export const createDataStore = () => {
   const [store, setStore] = createStore<DataStoreAPI>({
     commands: createCommandSliceAPI(),
     currentNote: null,
-    notes: [],
+    notes: createNoteSliceAPI(),
     images: [],
   });
 
@@ -27,5 +32,8 @@ export const createDataStore = () => {
 
   return {
     ...createCommandSlice(createStore(store.commands), evaluateCommand),
+    ...createNoteSlice(createStore(store.notes)),
   };
 };
+
+export type DataStore = ReturnType<typeof createDataStore>;

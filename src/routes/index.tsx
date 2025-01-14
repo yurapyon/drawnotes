@@ -20,7 +20,7 @@ const App: Component = () => {
       <Show
         fallback={
           <div class="w-full h-full flex flex-col justify-center items-center">
-            <LoginSignUp classList={{ "w-36 h-40": true }} />
+            <LoginSignUp classList={{ "w-42 h-30": true }} />
           </div>
         }
         when={session()?.data}

@@ -16,6 +16,7 @@ interface TextInputProps {
       target: HTMLInputElement;
     }
   ) => void;
+  type?: "text" | "email" | "password";
 }
 
 export const TextInput: Component<TextInputProps> = (props) => {
@@ -26,7 +27,7 @@ export const TextInput: Component<TextInputProps> = (props) => {
       on:input={props.onInput}
       on:change={props.onChange}
       placeholder={props.placeholder}
-      type="text"
+      type={props.type || "text"}
       value={props.value}
     />
   );
