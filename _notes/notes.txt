@@ -1,0 +1,65 @@
+Models
+
+folder {
+    id: string
+    parentId
+    tags ?
+
+}
+
+note {
+    tags []
+
+}
+
+image {
+    image_name
+    file *
+    offset
+}
+
+Folders / Sub folders?
+
+jump to specific points in the note with tags?
+
+search by tags?
+
+click on an image to view it bigger
+
+works in mobile browser
+
+instead of folders you could just only have tags
+smart search
+folders/sub folders can be managed with tags like:
+    project-name/subfolder0
+    project-name/subfolder1
+    project-name/subfolder2
+
+basic vim editor
+    line select
+    cut copy and paste
+    insert/normal mode
+    hjkl motion
+    o, to add line
+    d, to delete line
+
+autosaving? :w isn't so bad
+
+notes
+    date last edited
+
+text editor could be a div of text with transparent bg on top of all the highlighting stuff
+
+ability to link external images?
+inline links? (inside the text)
+
+if the note has images, scale the imageview bar halfway, othersize keep it hidden/small
+
+commands could create templates ie for grocery lists
+every note is autotagged with the date
+
+filters on the side, could have preset filter settings
+    for certain projects
+    for different types of lists
+
+drawable canvas on top of note or images?
