@@ -18,7 +18,7 @@ export const FolderViewer: Component = () => {
         onClick={() => {
           const id = userId();
           if (id) {
-            store.addBlankNote(id);
+            store.notes.addNote(id);
           }
         }}
       >

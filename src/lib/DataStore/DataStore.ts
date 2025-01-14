@@ -4,26 +4,35 @@ import {
   createCommandSlice,
   createCommandSliceAPI,
 } from "./slices/command";
-import { Image } from "@prisma/client";
 import {
   createNoteSlice,
   createNoteSliceAPI,
   NoteSliceAPI,
 } from "./slices/note";
+import {
+  AutosaveSliceAPI,
+  createAutosaveSlice,
+  createAutosaveSliceAPI,
+} from "./slices/autosave";
+import {
+  createEditorSlice,
+  createEditorSliceAPI,
+  EditorSliceAPI,
+} from "./slices/editor";
 
 export interface DataStoreAPI {
   commands: CommandSliceAPI;
-  currentNote: string | null;
+  editor: EditorSliceAPI;
   notes: NoteSliceAPI;
-  images: Image[];
+  autosave: AutosaveSliceAPI;
 }
 
 export const createDataStore = () => {
   const [store, setStore] = createStore<DataStoreAPI>({
     commands: createCommandSliceAPI(),
-    currentNote: null,
+    editor: createEditorSliceAPI(),
     notes: createNoteSliceAPI(),
-    images: [],
+    autosave: createAutosaveSliceAPI(),
   });
 
   const evaluateCommand = (command: string) => {
@@ -31,8 +40,10 @@ export const createDataStore = () => {
   };
 
   return {
-    ...createCommandSlice(createStore(store.commands), evaluateCommand),
-    ...createNoteSlice(createStore(store.notes)),
+    commands: createCommandSlice(createStore(store.commands), evaluateCommand),
+    editor: createEditorSlice(createStore(store.editor)),
+    notes: createNoteSlice(createStore(store.notes)),
+    autosave: createAutosaveSlice(createStore(store.autosave)),
   };
 };
 

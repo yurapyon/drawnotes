@@ -1,5 +1,6 @@
 import { Title } from "@solidjs/meta";
-import { createEffect, Show, type Component } from "solid-js";
+import { createEffect, onMount, Show, type Component } from "solid-js";
+import { useDataStoreContext } from "~/components/_Providers/DataStoreProvider";
 import { FolderViewer } from "~/components/FolderViewer";
 import { ImageViewer } from "~/components/ImageViewer";
 import { NoteEdit } from "~/components/NoteEdit";
@@ -9,6 +10,12 @@ import { authClient } from "~/lib/auth-client";
 
 const App: Component = () => {
   const session = authClient.useSession();
+
+  const store = useDataStoreContext();
+
+  onMount(() => {
+    store.editor.setCurrentNoteId("asdf");
+  });
 
   createEffect(() => {
     console.log(session());
@@ -29,7 +36,7 @@ const App: Component = () => {
         <div class="flex flex-col w-full h-full">
           <div class="grid grid-cols-[30ch_1fr_50ch] grid-rows-[1fr_min-content_min-content] w-full h-full">
             <FolderViewer />
-            <NoteEdit noteId={"asdf"} />
+            <NoteEdit />
             <ImageViewer />
             <div class="col-span-full">
               <StatusBar />
