@@ -1,0 +1,7 @@
+think about async and api routes
+    useAutosave is probably fine for async?
+    rpc for api routes is nice
+
+uploadThing
+
+drawing

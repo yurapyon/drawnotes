@@ -1,4 +1,5 @@
 import { SetStoreFunction } from "solid-js/store";
+import { trpc } from "~/lib/trpc-client";
 
 export interface AutosaveSliceAPI {
   saveStatuses: string[];
