@@ -17,7 +17,8 @@ export const FolderViewer: Component = () => {
       <Button
         variant={ButtonVariant.Dark}
         onClick={async () => {
-          await trpc.hi.query({});
+          const notes = await trpc.note.getAll.query();
+          console.log(notes);
           /*
           const id = userId();
           if (id) {
