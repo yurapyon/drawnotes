@@ -1,51 +1,38 @@
 import { Title } from "@solidjs/meta";
-import { createEffect, onMount, Show, type Component } from "solid-js";
+import { createResource, Show, type Component } from "solid-js";
 import { useDataStoreContext } from "~/components/_Providers/DataStoreProvider";
-import { FolderViewer } from "~/components/FolderViewer";
-import { ImageViewer } from "~/components/ImageViewer";
-import { NoteEdit } from "~/components/NoteEdit";
-import { LoginSignUp } from "~/components/Session/LoginSignUp";
-import { StatusBar } from "~/components/StatusBar";
-import { authClient } from "~/lib/auth-client";
+import { Editor } from "~/components/Editor";
 
-const App: Component = () => {
-  const session = authClient.useSession();
-
+const Dashboard: Component = () => {
   const store = useDataStoreContext();
 
-  onMount(() => {
+  const [initialLoad] = createResource(async () => {
+    await store.notes.loadNotes();
     store.editor.setCurrentNoteId("asdf");
   });
 
-  createEffect(() => {
-    console.log(session());
+  window.addEventListener("keydown", (e: KeyboardEvent) => {
+    switch (e.key) {
+      case ":":
+        e.preventDefault();
+        store.commands.startCommandEntry();
+        break;
+      case "Escape":
+        e.preventDefault();
+        store.commands.stopCommandEntry(false);
+        break;
+    }
   });
 
   return (
     <main class="font-mono w-screen h-screen text-sm">
       <Title>notes</Title>
-      <Show
-        fallback={
-          <div class="w-full h-full flex flex-col justify-center items-center">
-            <LoginSignUp classList={{ "w-42 h-30": true }} />
-          </div>
-        }
-        when={session()?.data}
-        keyed
-      >
-        <div class="flex flex-col w-full h-full">
-          <div class="grid grid-cols-[30ch_1fr_50ch] grid-rows-[1fr_min-content_min-content] w-full h-full">
-            <FolderViewer />
-            <NoteEdit />
-            <ImageViewer />
-            <div class="col-span-full">
-              <StatusBar />
-            </div>
-          </div>
-        </div>
+      <Show when={initialLoad.loading}>Loading...</Show>
+      <Show when={!initialLoad.loading}>
+        <Editor />
       </Show>
     </main>
   );
 };
 
-export default App;
+export default Dashboard;

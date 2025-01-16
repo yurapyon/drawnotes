@@ -1,10 +1,10 @@
-import { Note } from "@prisma/client";
+import { Note, Tag } from "@prisma/client";
 import { SetStoreFunction } from "solid-js/store";
 import { v4 as uuidv4 } from "uuid";
 import { trpc } from "~/lib/trpc-client";
 
 export interface NoteSliceAPI {
-  notes: Note[] | null;
+  notes: (Note & { tags: Tag[] })[] | null;
 }
 
 export const createNoteSliceAPI = () => {
@@ -21,7 +21,7 @@ export const createNoteSlice = (
 
   const loadNotes = async () => {
     if (store.notes === null) {
-      const notes = await trpc.note.getAll.query();
+      const notes = await trpc.note.getAllWithTags.query();
       setStore("notes", notes);
     }
   };
@@ -29,7 +29,13 @@ export const createNoteSlice = (
   return {
     loadNotes,
     addNote: (userId: string) => {
-      const newNote: Note = { id: uuidv4(), text: "", userId };
+      const newNote: Note & { tags: Tag[] } = {
+        id: uuidv4(),
+        title: "",
+        text: "",
+        userId,
+        tags: [],
+      };
       setStore((previousStore) => {
         if (previousStore.notes === null) {
           return previousStore;

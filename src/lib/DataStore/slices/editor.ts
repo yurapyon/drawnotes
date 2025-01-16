@@ -18,11 +18,9 @@ export const createEditorSlice = (
 
   return {
     setCurrentNoteId: (id: string) => {
-      console.log("here", id);
       setStore("currentNoteId", id);
     },
     getCurrentNoteId: () => {
-      console.log("here2", store.currentNoteId);
       return store.currentNoteId;
     },
   };

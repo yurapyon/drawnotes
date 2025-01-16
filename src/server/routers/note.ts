@@ -4,9 +4,12 @@ import { z } from "zod";
 import { NoteSchema } from "../../../prisma/generated/zod";
 
 export const noteRouter = router({
-  getAll: protectedProcedure.query(async ({ ctx }) => {
+  getAllWithTags: protectedProcedure.query(async ({ ctx }) => {
     const userId = ctx.session.user.id;
-    const notes = await prisma.note.findMany({ where: { userId } });
+    const notes = await prisma.note.findMany({
+      where: { userId },
+      include: { tags: true },
+    });
     return notes;
   }),
 

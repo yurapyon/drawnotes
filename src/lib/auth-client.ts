@@ -22,4 +22,5 @@ export const signUp = async (email: string, password: string) => {
 
 export const signOut = async () => {
   await authClient.signOut();
+  // TODO refresh page
 };

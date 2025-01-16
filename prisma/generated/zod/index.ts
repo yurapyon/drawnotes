@@ -12,9 +12,11 @@ import type { Prisma } from '@prisma/client';
 
 export const TransactionIsolationLevelSchema = z.enum(['ReadUncommitted','ReadCommitted','RepeatableRead','Serializable']);
 
-export const NoteScalarFieldEnumSchema = z.enum(['id','text','userId']);
+export const NoteScalarFieldEnumSchema = z.enum(['id','title','text','userId']);
 
-export const ImageScalarFieldEnumSchema = z.enum(['id','userId']);
+export const TagScalarFieldEnumSchema = z.enum(['id','name','color','userId']);
+
+export const ImageScalarFieldEnumSchema = z.enum(['id','url','userId']);
 
 export const UserScalarFieldEnumSchema = z.enum(['id','name','email','emailVerified','image','createdAt','updatedAt']);
 
@@ -39,6 +41,7 @@ export const NullsOrderSchema = z.enum(['first','last']);
 
 export const NoteSchema = z.object({
   id: z.string().uuid(),
+  title: z.string(),
   text: z.string(),
   userId: z.string(),
 })
@@ -46,11 +49,25 @@ export const NoteSchema = z.object({
 export type Note = z.infer<typeof NoteSchema>
 
 /////////////////////////////////////////
+// TAG SCHEMA
+/////////////////////////////////////////
+
+export const TagSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string(),
+  color: z.string().nullable(),
+  userId: z.string(),
+})
+
+export type Tag = z.infer<typeof TagSchema>
+
+/////////////////////////////////////////
 // IMAGE SCHEMA
 /////////////////////////////////////////
 
 export const ImageSchema = z.object({
   id: z.string().uuid(),
+  url: z.string(),
   userId: z.string(),
 })
 

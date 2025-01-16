@@ -16,15 +16,30 @@ datasource db {
 // App ===
 
 model Note {
-  id   String @id @default(uuid())
-  text String
+  id               String @id @default(uuid())
+  title            String @default("")
+  text             String @default("")
 
-  user   User   @relation(fields: [userId], references: [id])
+  user             User   @relation(fields: [userId], references: [id])
+  userId           String
+
+  tags             Tag[]
+}
+
+model Tag {
+  id     String  @id @default(uuid())
+  name   String  @default("")
+  color  String?
+
+  user   User    @relation(fields: [userId], references: [id])
   userId String
+
+  notes  Note[]
 }
 
 model Image {
-  id   String @id @default(uuid())
+  id     String @id @default(uuid())
+  url    String
 
   user   User   @relation(fields: [userId], references: [id])
   userId String
@@ -44,7 +59,12 @@ model User {
   accounts      Account[]
 
   notes         Note[]
+  tags          Tag[]
   images        Image[]
+
+  // Settings
+  lastEditedNote String?
+  useVimMode     Boolean  @default(true)
 
   @@unique([email])
   @@map("user")
