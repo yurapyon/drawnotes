@@ -16,17 +16,22 @@ datasource db {
 // App ===
 
 model Note {
-  id               String @id @default(uuid())
-  title            String @default("")
-  text             String @default("")
+  createdAt DateTime @default(now())
 
-  user             User   @relation(fields: [userId], references: [id])
-  userId           String
+  id        String   @id @default(uuid())
+  title     String   @default("")
+  text      String   @default("")
 
-  tags             Tag[]
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+
+  tags      Tag[]
 }
 
 model Tag {
+  createdAt DateTime @default(now())
+
+  // TODO probably use an index for ordering rather than createdAt
   id     String  @id @default(uuid())
   name   String  @default("")
   color  String?
@@ -38,6 +43,8 @@ model Tag {
 }
 
 model Image {
+  createdAt DateTime @default(now())
+
   id     String @id @default(uuid())
   url    String
 
@@ -48,23 +55,23 @@ model Image {
 // Auth ===
 
 model User {
-  id            String    @id
-  name          String
-  email         String
-  emailVerified Boolean
-  image         String?
-  createdAt     DateTime
-  updatedAt     DateTime
-  sessions      Session[]
-  accounts      Account[]
+  id               String    @id
+  name             String
+  email            String
+  emailVerified    Boolean
+  image            String?
+  createdAt        DateTime
+  updatedAt        DateTime
+  sessions         Session[]
+  accounts         Account[]
 
-  notes         Note[]
-  tags          Tag[]
-  images        Image[]
+  notes            Note[]
+  tags             Tag[]
+  images           Image[]
 
   // Settings
-  lastEditedNote String?
-  useVimMode     Boolean  @default(true)
+  lastEditedNoteId String?
+  useVimMode       Boolean  @default(true)
 
   @@unique([email])
   @@map("user")

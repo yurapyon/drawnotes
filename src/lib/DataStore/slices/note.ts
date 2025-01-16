@@ -28,6 +28,9 @@ export const createNoteSlice = (
 
   return {
     loadNotes,
+    getNotes: () => {
+      return store.notes;
+    },
     addNote: (userId: string) => {
       const newNote: Note & { tags: Tag[] } = {
         id: uuidv4(),
@@ -35,6 +38,7 @@ export const createNoteSlice = (
         text: "",
         userId,
         tags: [],
+        createdAt: new Date(),
       };
       setStore((previousStore) => {
         if (previousStore.notes === null) {
@@ -49,7 +53,7 @@ export const createNoteSlice = (
       return newNote;
     },
     getNote: (noteId: string) => {
-      return store.notes?.find((note) => note.id === noteId);
+      return store.notes?.find((note) => note.id === noteId) || null;
     },
     updateNote: (noteId: string, updateObject: Partial<Note>) => {
       setStore("notes", (note) => note.id === noteId, updateObject);

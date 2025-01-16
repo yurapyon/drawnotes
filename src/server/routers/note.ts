@@ -14,11 +14,11 @@ export const noteRouter = router({
   }),
 
   createNote: protectedProcedure
-    .input(z.object({ id: z.string(), text: z.string() }))
+    .input(NoteSchema)
     .mutation(async ({ input, ctx }) => {
       const userId = ctx.session.user.id;
       await prisma.note.create({
-        data: { id: input.id, text: input.text, userId },
+        data: { ...input, userId },
       });
     }),
 

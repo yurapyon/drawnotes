@@ -2,13 +2,15 @@ import { Title } from "@solidjs/meta";
 import { createResource, Show, type Component } from "solid-js";
 import { useDataStoreContext } from "~/components/_Providers/DataStoreProvider";
 import { Editor } from "~/components/Editor";
+import { trpc } from "~/lib/trpc-client";
 
 const Dashboard: Component = () => {
   const store = useDataStoreContext();
 
   const [initialLoad] = createResource(async () => {
     await store.notes.loadNotes();
-    store.editor.setCurrentNoteId("asdf");
+    const settings = await trpc.user.getUserSettings.query();
+    store.editor.setCurrentNoteId(settings.lastEditedNoteId);
   });
 
   window.addEventListener("keydown", (e: KeyboardEvent) => {

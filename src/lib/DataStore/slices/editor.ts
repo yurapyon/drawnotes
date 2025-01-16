@@ -17,7 +17,7 @@ export const createEditorSlice = (
   const [store, setStore] = storeSetStore;
 
   return {
-    setCurrentNoteId: (id: string) => {
+    setCurrentNoteId: (id: string | null) => {
       setStore("currentNoteId", id);
     },
     getCurrentNoteId: () => {

@@ -9,9 +9,7 @@ interface NoteEditProps {}
 
 export const NoteEdit: Component<NoteEditProps> = (props) => {
   const store = useDataStoreContext();
-  const currentNoteId = store.editor.getCurrentNoteId();
-
-  const note = () => store.notes.getNote(currentNoteId || "");
+  const note = () => store.notes.getNote(store.editor.getCurrentNoteId() || "");
 
   const updateNote = useAutosave({
     immediate: store.notes.updateNote,
@@ -22,34 +20,41 @@ export const NoteEdit: Component<NoteEditProps> = (props) => {
   });
 
   return (
-    <Show when={note()} keyed fallback={"Error..."}>
-      {(note) => {
+    <Show when={store.editor.getCurrentNoteId()} keyed fallback={"Error..."}>
+      {(noteId) => {
+        const note = store.notes.getNote(noteId);
         return (
-          <div class="flex flex-col">
-            <div class="flex flew-row gap-[1ch]">
-              <TextInput
-                value={note.title}
-                onChange={(e) => {
-                  const title = e.target.value;
-                  updateNote(note.id, { title });
-                }}
-              />
-              <div class="grow min-w-0" />
-              <Index each={note.tags}>
-                {(tag) => {
-                  return <div class="bg-green-300">{tag().name}</div>;
-                }}
-              </Index>
-            </div>
-            <textarea
-              class="grow min-h-0 resize-none bg-gray-200"
-              value={note.text}
-              onInput={(e) => {
-                const text = e.target.value;
-                updateNote(note.id, { text });
-              }}
-            />
-          </div>
+          <Show when={note} fallback={"Error..."}>
+            {(note) => {
+              return (
+                <div class="flex flex-col">
+                  <div class="flex flew-row gap-[1ch]">
+                    <TextInput
+                      value={note().title}
+                      onInput={(e) => {
+                        const title = e.target.value;
+                        updateNote(note().id, { title });
+                      }}
+                    />
+                    <div class="grow min-w-0" />
+                    <Index each={note().tags}>
+                      {(tag) => {
+                        return <div class="bg-green-300">{tag().name}</div>;
+                      }}
+                    </Index>
+                  </div>
+                  <textarea
+                    class="grow min-h-0 resize-none bg-gray-200"
+                    value={note().text}
+                    onInput={(e) => {
+                      const text = e.target.value;
+                      updateNote(note().id, { text });
+                    }}
+                  />
+                </div>
+              );
+            }}
+          </Show>
         );
       }}
     </Show>

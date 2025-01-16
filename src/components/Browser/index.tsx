@@ -1,31 +1,23 @@
 import { Component } from "solid-js";
-import { Folders } from "./Folders";
+import { NoteList } from "./NoteList";
 import { FolderViewerControls } from "./FolderViewerControls";
 import { Button, ButtonVariant } from "../_UI/Button";
 import { useDataStoreContext } from "../_Providers/DataStoreProvider";
-import { authClient } from "~/lib/auth-client";
+import { useRequiredAuth } from "../_Providers/RequiredAuthProvider";
 import { trpc } from "~/lib/trpc-client";
 
 export const FolderViewer: Component = () => {
   const store = useDataStoreContext();
-  const session = authClient.useSession();
-  const userId = () => session()?.data?.user.id;
+  const session = useRequiredAuth();
   return (
-    <div class="flex flex-col gap-2">
+    <div class="flex flex-col">
       <FolderViewerControls />
-      <Folders />
+      <NoteList />
       <Button
         variant={ButtonVariant.Dark}
-        onClick={async () => {
-          // const notes = await trpc.note.getAll.query();
-          // console.log(notes);
-          await store.notes.loadNotes();
-          /*
-          const id = userId();
-          if (id) {
-            store.notes.addNote(id);
-          }
-          */
+        onClick={() => {
+          const newNote = store.notes.addNote(session.user.id);
+          trpc.note.createNote.mutate(newNote);
         }}
       >
         create note
