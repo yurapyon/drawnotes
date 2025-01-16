@@ -4,6 +4,7 @@ import { trpc } from "~/lib/trpc-client";
 import { Note } from "@prisma/client";
 import { useAutosave } from "~/lib/Hooks/useAutosave";
 import { TextInput } from "../_UI/TextInput";
+import { NoteStatus } from "./NoteStatus";
 
 interface NoteEditProps {}
 
@@ -27,21 +28,10 @@ export const NoteEdit: Component<NoteEditProps> = (props) => {
             {(note) => {
               return (
                 <div class="flex flex-col">
-                  <div class="flex flew-row gap-[1ch]">
-                    <TextInput
-                      value={note().title}
-                      onInput={(e) => {
-                        const title = e.target.value;
-                        updateNote(note().id, { title });
-                      }}
-                    />
-                    <div class="grow min-w-0" />
-                    <Index each={note().tags}>
-                      {(tag) => {
-                        return <div class="bg-green-300">{tag().name}</div>;
-                      }}
-                    </Index>
-                  </div>
+                  <NoteStatus
+                    classList={{ "w-full": true }}
+                    noteId={note().id}
+                  />
                   <textarea
                     class="grow min-h-0 resize-none bg-gray-200"
                     value={note().text}

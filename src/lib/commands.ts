@@ -2,6 +2,7 @@ export enum ActionType {
   AddTag = "add-tag",
   RemoveTag = "remove-tag",
   SignOut = "sign-out",
+  NewNote = "new",
 }
 
 export interface Action {

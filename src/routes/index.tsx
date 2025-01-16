@@ -21,7 +21,7 @@ const Dashboard: Component = () => {
         break;
       case "Escape":
         e.preventDefault();
-        store.commands.stopCommandEntry(false);
+        store.commands.stopCommandEntry();
         break;
     }
   });

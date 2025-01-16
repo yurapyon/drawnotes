@@ -35,12 +35,8 @@ export const createDataStore = () => {
     autosave: createAutosaveSliceAPI(),
   });
 
-  const evaluateCommand = (command: string) => {
-    console.log(command);
-  };
-
   return {
-    commands: createCommandSlice(createStore(store.commands), evaluateCommand),
+    commands: createCommandSlice(createStore(store.commands)),
     editor: createEditorSlice(createStore(store.editor)),
     notes: createNoteSlice(createStore(store.notes)),
     autosave: createAutosaveSlice(createStore(store.autosave)),

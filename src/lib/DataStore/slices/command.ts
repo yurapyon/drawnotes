@@ -16,8 +16,7 @@ export const createCommandSliceAPI = () => {
 };
 
 export const createCommandSlice = (
-  storeSetStore: [CommandSliceAPI, SetStoreFunction<CommandSliceAPI>],
-  evaluateCommand: (command: string) => void
+  storeSetStore: [CommandSliceAPI, SetStoreFunction<CommandSliceAPI>]
 ) => {
   const [store, setStore] = storeSetStore;
   return {
@@ -33,15 +32,8 @@ export const createCommandSlice = (
         };
       });
     },
-    stopCommandEntry: (runCommand: boolean) => {
-      if (runCommand) {
-        const command = store.currentCommand;
-        evaluateCommand(command);
-        setStore((previousStore) => {
-          const newHistory = [...previousStore.history, command];
-          return { ...previousStore, history: newHistory };
-        });
-      }
+    stopCommandEntry: () => {
+      const command = store.currentCommand;
       setStore((previousStore) => {
         return {
           ...previousStore,
@@ -49,6 +41,7 @@ export const createCommandSlice = (
           currentCommand: "",
         };
       });
+      return command;
     },
     getCurrentCommand: () => {
       return store.currentCommand;

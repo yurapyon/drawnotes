@@ -1,8 +1,8 @@
 import { Component } from "solid-js";
-import { FolderViewer } from "~/components/Browser";
-import { ImageViewer } from "~/components/ImageViewer";
-import { NoteEdit } from "~/components/NoteEdit";
-import { StatusBar } from "~/components/StatusBar";
+import { FolderViewer } from "~/components/Browser/Browser";
+import { ImageViewer } from "~/components/ImageViewer/ImageViewer";
+import { NoteEdit } from "~/components/NoteEdit/NoteEdit";
+import { CommandBar } from "./CommandBar/CommandBar";
 
 export const Editor: Component = () => {
   return (
@@ -12,7 +12,7 @@ export const Editor: Component = () => {
         <NoteEdit />
         <ImageViewer />
         <div class="col-span-full">
-          <StatusBar />
+          <CommandBar />
         </div>
       </div>
     </div>
