@@ -9,7 +9,6 @@ interface NoteEditProps {}
 
 export const NoteEdit: Component<NoteEditProps> = (props) => {
   const store = useDataStoreContext();
-  const note = () => store.notes.getNote(store.editor.getCurrentNoteId() || "");
 
   const updateNote = useAutosave({
     immediate: store.notes.updateNote,
