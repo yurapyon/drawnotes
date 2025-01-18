@@ -1,7 +1,7 @@
 import { Component, Show } from "solid-js";
-import { useDataStoreContext } from "../_Providers/DataStoreProvider";
 import { formatDate } from "~/lib/utils/formatDate";
 import { ClassProps } from "../_misc/ClassProps";
+import { useDataStoreContext } from "../_Providers/DataStoreProvider";
 import { SaveIndicator } from "../_UI/SaveIndicator";
 
 interface NoteStatusProps extends ClassProps {

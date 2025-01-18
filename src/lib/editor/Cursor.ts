@@ -16,17 +16,13 @@ export namespace Cursor {
     };
   };
 
-  export const clone = (c: Cursor): Cursor => {
-    return {
-      actual: { ...c.actual },
-      desiredX: c.desiredX,
-    };
+  export const setX = (c: Cursor, x: number) => {
+    c.actual.x = x;
+    c.desiredX = x;
   };
 
-  export const set = (c: Cursor, x: number, y: number) => {
-    c.actual.x = x;
+  export const setY = (c: Cursor, y: number) => {
     c.actual.y = y;
-    c.desiredX = x;
   };
 
   export const moveX = (c: Cursor, lines: string[], dx: number) => {

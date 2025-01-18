@@ -1,8 +1,8 @@
 import { Component, createSignal } from "solid-js";
-import { TextInput } from "../_UI/TextInput";
-import { Button } from "../_UI/Button";
 import { signIn, signUp } from "~/lib/auth-client";
 import { ClassProps } from "../_misc/ClassProps";
+import { Button } from "../_UI/Button";
+import { TextInput } from "../_UI/TextInput";
 
 interface LoginSignUpProps extends ClassProps {}
 

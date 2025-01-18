@@ -1,5 +1,7 @@
+import { isCharacterKey } from "../utils/keyboardUtils";
 import { Cursor } from "./Cursor";
-import { Selection, SelectionDireciton } from "./Selection";
+import { LineBuffer } from "./LineBuffer";
+import { Selection } from "./Selection";
 
 export enum EditingMode {
   Normal = "normal",
@@ -17,10 +19,8 @@ export interface EditorSignals {
 export interface Editor {
   mode: EditingMode;
   cursor: Cursor;
-  lines: string[];
   clipboard: string[];
   selection: Selection | null;
-  signals: EditorSignals | null;
 }
 
 export namespace Editor {
@@ -28,86 +28,144 @@ export namespace Editor {
     return {
       mode: EditingMode.Normal,
       cursor: Cursor.create(),
-      lines: [],
       clipboard: [],
       selection: null,
-      signals: null,
     };
   };
 
-  export const setTextBuffer = (e: Editor, buffer: string) => {
-    e.lines = buffer.split("\n");
-    Cursor.set(e.cursor, 0, 0);
-    if (e.signals) {
-      e.signals.onLinesChange([...e.lines]);
-      e.signals.onCursorChange(Cursor.clone(e.cursor));
-    }
+  export const resetCursor = (e: Editor) => {
+    Cursor.setX(e.cursor, 0);
+    Cursor.setY(e.cursor, 0);
   };
 
-  export const moveCursorX = (e: Editor, dx: number) => {
-    Cursor.moveX(e.cursor, e.lines, dx);
+  export const moveCursorX = (e: Editor, buffer: LineBuffer, dx: number) => {
+    Cursor.moveX(e.cursor, buffer.lines, dx);
     if (e.selection) {
       e.selection.endpoint.x = e.cursor.actual.x;
-      if (e.signals) {
-        e.signals.onSelectionChange(e.selection);
-      }
-    }
-    if (e.signals) {
-      e.signals.onCursorChange(Cursor.clone(e.cursor));
     }
   };
 
-  export const moveCursorY = (e: Editor, dy: number) => {
-    Cursor.moveY(e.cursor, e.lines, dy);
+  export const moveCursorY = (e: Editor, buffer: LineBuffer, dy: number) => {
+    Cursor.moveY(e.cursor, buffer.lines, dy);
     if (e.selection) {
       e.selection.endpoint.y = e.cursor.actual.y;
-      if (e.signals) {
-        e.signals.onSelectionChange(e.selection);
-      }
-    }
-    if (e.signals) {
-      e.signals.onCursorChange(Cursor.clone(e.cursor));
     }
   };
 
-  export const copy = (e: Editor) => {
+  export const copy = (e: Editor, buffer: LineBuffer) => {
     if (e.selection) {
       const copiedLines = Selection.copy(
         e.selection,
-        e.lines,
+        buffer.lines,
         e.mode === EditingMode.VisualLine
       );
       e.clipboard = copiedLines;
     }
   };
 
-  export const cut = (e: Editor) => {
+  export const cut = (e: Editor, buffer: LineBuffer) => {
     if (e.selection) {
       const { copiedLines, newLines } = Selection.cut(
         e.selection,
-        e.lines,
+        buffer.lines,
         e.mode === EditingMode.VisualLine
       );
       e.clipboard = copiedLines;
-      e.lines = newLines;
+      buffer.lines = newLines;
     }
   };
 
-  export const insertBlankLine = (e: Editor, insertBefore: boolean) => {
-    // TODO insert whitespace and move cursor.x
+  export const paste = (e: Editor, buffer: LineBuffer, text: string) => {
+    LineBuffer.insertText(buffer, text, e.cursor.actual.x, e.cursor.actual.y);
+  };
 
-    const idx = e.cursor.actual.y;
-    if (insertBefore) {
-      e.lines.splice(idx, 0, "");
-    } else {
-      e.lines.splice(idx + 1, 0, "");
-      moveCursorY(e, 1);
-      if (e.signals) {
-        e.signals.onCursorChange(Cursor.clone(e.cursor));
-      }
+  export const insertBlankLine = (
+    e: Editor,
+    buffer: LineBuffer,
+    insertBefore: boolean
+  ) => {
+    let idx = e.cursor.actual.y;
+    if (!insertBefore) {
+      idx += 1;
+      moveCursorY(e, buffer, 1);
     }
-    if (e.signals) {
-      e.signals.onLinesChange([...e.lines]);
+    LineBuffer.insertBlankLine(buffer, idx);
+    // TODO insert move cursor.x based on the whitespace of the new line
+  };
+
+  export const handleKeyboardEvent = (
+    e: Editor,
+    ev: KeyboardEvent,
+    buffer: LineBuffer
+  ) => {
+    let wasHandled = false;
+
+    switch (e.mode) {
+      case EditingMode.Normal:
+        {
+          switch (ev.key) {
+            case "h":
+              moveCursorX(e, buffer, -1);
+              wasHandled = true;
+              break;
+            case "j":
+              moveCursorY(e, buffer, 1);
+              wasHandled = true;
+              break;
+            case "k":
+              moveCursorY(e, buffer, -1);
+              wasHandled = true;
+              break;
+            case "l":
+              moveCursorX(e, buffer, 1);
+              wasHandled = true;
+              break;
+            case "O":
+              insertBlankLine(e, buffer, true);
+              wasHandled = true;
+              break;
+            case "o":
+              insertBlankLine(e, buffer, false);
+              wasHandled = true;
+              break;
+            case "i":
+              e.mode = EditingMode.Insert;
+              wasHandled = true;
+              break;
+            case "p":
+              paste(e, buffer, "asdf\n");
+              wasHandled = true;
+              break;
+          }
+        }
+        break;
+      case EditingMode.Insert:
+        {
+          if (isCharacterKey(ev)) {
+            paste(e, buffer, ev.key);
+            moveCursorX(e, buffer, 1);
+            wasHandled = true;
+          } else {
+            switch (ev.key) {
+              case "Enter":
+                // TODO move cursor to start of new line
+                ev.preventDefault();
+                paste(e, buffer, "\n");
+                moveCursorY(e, buffer, 1);
+                Cursor.setX(e.cursor, 0);
+                wasHandled = true;
+                break;
+              case "Escape":
+                ev.preventDefault();
+                e.mode = EditingMode.Normal;
+                wasHandled = true;
+                break;
+            }
+          }
+        }
+        break;
     }
+
+    return wasHandled;
   };
 }

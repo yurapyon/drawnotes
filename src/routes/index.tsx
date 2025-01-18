@@ -11,17 +11,15 @@ const Dashboard: Component = () => {
     await store.notes.loadNotes();
     const settings = await trpc.user.getUserSettings.query();
     store.editor.setCurrentNoteId(settings.lastEditedNoteId);
-    if (settings.lastEditedNoteId) {
-      const note = store.notes.getNote(settings.lastEditedNoteId);
-      if (note) {
-        store.editor.setTextBuffer(note.text);
-      }
-    }
   });
 
   onMount(() => {
-    window.addEventListener("keydown", (e: KeyboardEvent) => {
-      switch (e.key) {
+    window.addEventListener("keydown", (ev: KeyboardEvent) => {
+      if (store.editor.handleKeyboardEvent(ev)) {
+        return;
+      }
+
+      switch (ev.key) {
         case "ArrowLeft":
           store.editor.toggleSidebar(true);
           break;
@@ -34,30 +32,11 @@ const Dashboard: Component = () => {
         case "ArrowDown":
           store.editor.advanceSelectedNote(1);
           break;
-        case "h":
-          store.editor.moveCursor(-1, 0);
-          break;
-        case "j":
-          store.editor.moveCursor(0, 1);
-          break;
-        case "k":
-          store.editor.moveCursor(0, -1);
-          break;
-        case "l":
-          store.editor.moveCursor(1, 0);
-          break;
-        case "O":
-          store.editor.insertBlankLine(true);
-          break;
-        case "o":
-          store.editor.insertBlankLine(false);
-          break;
         case ":":
-          e.preventDefault();
           store.commands.startCommandEntry();
           break;
         case "Escape":
-          e.preventDefault();
+          ev.preventDefault();
           store.commands.stopCommandEntry();
           break;
       }
