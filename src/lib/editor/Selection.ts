@@ -9,7 +9,6 @@ export enum SelectionDireciton {
 export interface Selection {
   anchor: Maths.Point;
   endpoint: Maths.Point;
-  isFullLine: boolean;
 }
 
 export namespace Selection {
@@ -17,26 +16,34 @@ export namespace Selection {
     return {
       anchor: Maths.Point.zero(),
       endpoint: Maths.Point.zero(),
-      isFullLine: false,
     };
   };
 
-  export const start = (
-    s: Selection,
-    anchor: Maths.Point,
-    isFullLine: boolean
-  ) => {
+  export const start = (s: Selection, anchor: Maths.Point) => {
     s.anchor = anchor;
     s.endpoint = anchor;
-    s.isFullLine = isFullLine;
   };
 
-  export const copy = (s: Selection, lines: string[]) => {
+  export const copy = (
+    s: Selection,
+    lines: string[],
+    copyFullLines: boolean
+  ): string[] => {
+    const { start, end } = getBounds(s);
+    if (copyFullLines) {
+      start.x = 0;
+      end.x = lines[end.y].length;
+    }
+
     // TODO
+    return [];
   };
 
-  export const cut = (s: Selection, lines: string[]) => {
+  export const cut = (s: Selection, lines: string[], cutFullLines: boolean) => {
+    const copiedLines = copy(s, lines, cutFullLines);
+    const newLines = [""];
     // TODO
+    return { copiedLines, newLines };
   };
 
   export const getDirection = (s: Selection) => {
@@ -55,29 +62,15 @@ export namespace Selection {
     }
   };
 
-  export const getHighlight = (
-    s: Selection,
-    lines: string[]
-  ): { startX: number; endX: number } => {
-    let left: Maths.Point, right: Maths.Point;
+  export const getBounds = (s: Selection) => {
+    let start: Maths.Point, end: Maths.Point;
     if (getDirection(s) === SelectionDireciton.Left) {
-      left = s.endpoint;
-      right = s.anchor;
+      start = s.endpoint;
+      end = s.anchor;
     } else {
-      left = s.anchor;
-      right = s.endpoint;
+      start = s.anchor;
+      end = s.endpoint;
     }
-    let startX: number, endX: number;
-    if (s.isFullLine) {
-      startX = 0;
-      endX = lines[right.y].length;
-    } else {
-      startX = left.x;
-      endX = right.x;
-    }
-    return {
-      startX,
-      endX,
-    };
+    return { start, end };
   };
 }

@@ -1,4 +1,4 @@
-import { Component } from "solid-js";
+import { Component, createEffect } from "solid-js";
 import { useDataStoreContext } from "../_Providers/DataStoreProvider";
 import { ClassProps } from "../_misc/ClassProps";
 
@@ -12,8 +12,8 @@ export const Cursor: Component<CursorProps> = (props) => {
       class="bg-blue-300 w-[1ch] h-[1lh]"
       classList={props.classList}
       style={{
-        left: `${store.editor.getCursor().x}ch`,
-        top: `${store.editor.getCursor().y}lh`,
+        left: `${store.editor.getCursor().actual.x}ch`,
+        top: `${store.editor.getCursor().actual.y}lh`,
       }}
     />
   );

@@ -1,5 +1,6 @@
-import { SetStoreFunction } from "solid-js/store";
-import { EditingMode } from "~/lib/editor/Editor";
+import { produce, SetStoreFunction, unwrap } from "solid-js/store";
+import { Cursor } from "~/lib/editor/Cursor";
+import { EditingMode, Editor } from "~/lib/editor/Editor";
 import { Maths } from "~/lib/utils/maths";
 
 export interface EditorSliceAPI {
@@ -9,9 +10,12 @@ export interface EditorSliceAPI {
   // Not saved
   leftSidebarOpen: boolean;
   rightSidebarOpen: boolean;
-  mode: EditingMode;
 
-  cursor: Maths.Point;
+  lines: string[];
+  cursor: Cursor;
+
+  // ref
+  editor: Editor;
 }
 
 export const createEditorSliceAPI = () => {
@@ -19,8 +23,9 @@ export const createEditorSliceAPI = () => {
     currentNoteId: null,
     leftSidebarOpen: true,
     rightSidebarOpen: false,
-    mode: EditingMode.Normal,
-    cursor: Maths.Point.zero(),
+    lines: [],
+    editor: Editor.create(),
+    cursor: Cursor.create(),
   };
   return ret;
 };
@@ -29,6 +34,13 @@ export const createEditorSlice = (
   storeSetStore: [EditorSliceAPI, SetStoreFunction<EditorSliceAPI>]
 ) => {
   const [store, setStore] = storeSetStore;
+
+  const unwrappedEditor = unwrap(store).editor;
+  unwrappedEditor.signals = {
+    onCursorChange: (c) => setStore("cursor", c),
+    onLinesChange: (l) => setStore("lines", l),
+    onSelectionChange: () => {},
+  };
 
   return {
     setCurrentNoteId: (id: string | null) => {
@@ -47,18 +59,24 @@ export const createEditorSlice = (
         setStore("rightSidebarOpen", !store.rightSidebarOpen);
       }
     },
-    getCurrentMode: () => {
-      return store.mode;
+    setTextBuffer: (buffer: string) => {
+      Editor.setTextBuffer(unwrappedEditor, buffer);
     },
     setCurrentMode: (to: EditingMode) => {
-      setStore("mode", to);
+      // setStore("mode", to);
     },
-    moveCursor: (x: number, y: number) => {
-      setStore("cursor", "x", store.cursor.x + x);
-      setStore("cursor", "y", store.cursor.y + y);
+    moveCursor: (dx: number, dy: number) => {
+      Editor.moveCursorX(unwrappedEditor, dx);
+      Editor.moveCursorY(unwrappedEditor, dy);
     },
     getCursor: () => {
       return store.cursor;
+    },
+    insertBlankLine: (insertBefore: boolean) => {
+      Editor.insertBlankLine(unwrappedEditor, insertBefore);
+    },
+    getLines: () => {
+      return store.lines;
     },
   };
 };

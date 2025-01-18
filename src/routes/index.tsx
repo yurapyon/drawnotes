@@ -11,6 +11,12 @@ const Dashboard: Component = () => {
     await store.notes.loadNotes();
     const settings = await trpc.user.getUserSettings.query();
     store.editor.setCurrentNoteId(settings.lastEditedNoteId);
+    if (settings.lastEditedNoteId) {
+      const note = store.notes.getNote(settings.lastEditedNoteId);
+      if (note) {
+        store.editor.setTextBuffer(note.text);
+      }
+    }
   });
 
   onMount(() => {
@@ -39,6 +45,12 @@ const Dashboard: Component = () => {
           break;
         case "l":
           store.editor.moveCursor(1, 0);
+          break;
+        case "O":
+          store.editor.insertBlankLine(true);
+          break;
+        case "o":
+          store.editor.insertBlankLine(false);
           break;
         case ":":
           e.preventDefault();

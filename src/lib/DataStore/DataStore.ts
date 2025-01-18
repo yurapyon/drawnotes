@@ -63,6 +63,7 @@ export const createDataStore = () => {
     const newIndex = Maths.mod(currentNoteIndex + amount, sortedNotes.length);
     const newId = sortedNotes[newIndex].id;
     functions.editor.setCurrentNoteId(newId);
+    functions.editor.setTextBuffer(sortedNotes[newIndex].text);
   };
 
   return { ...functions, editor: { ...functions.editor, advanceSelectedNote } };
