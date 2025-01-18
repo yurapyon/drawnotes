@@ -2,10 +2,9 @@ import { Component, createSignal } from "solid-js";
 import { TextInput } from "../_UI/TextInput";
 import { Button } from "../_UI/Button";
 import { signIn, signUp } from "~/lib/auth-client";
+import { ClassProps } from "../_misc/ClassProps";
 
-interface LoginSignUpProps {
-  classList?: Record<string, boolean | undefined>;
-}
+interface LoginSignUpProps extends ClassProps {}
 
 export const LoginSignUp: Component<LoginSignUpProps> = (props) => {
   const [email, setEmail] = createSignal("");
@@ -13,7 +12,7 @@ export const LoginSignUp: Component<LoginSignUpProps> = (props) => {
 
   return (
     <div
-      class="flex flex-col gap-[1.5em] px-[1ch] py-[1.5em] bg-gray-100"
+      class="flex flex-col gap-[1lh] px-[1ch] py-[1lh] bg-gray-100"
       classList={{ ...props.classList }}
     >
       <div>drawnotes</div>

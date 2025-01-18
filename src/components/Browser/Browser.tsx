@@ -1,13 +1,12 @@
 import { Component } from "solid-js";
 import { NoteList } from "./NoteList";
-import { FolderViewerControls } from "./FolderViewerControls";
+import { ClassProps } from "../_misc/ClassProps";
 
-export const FolderViewer: Component = () => {
+interface BrowserProps extends ClassProps {}
+
+export const Browser: Component<BrowserProps> = (props) => {
   return (
-    <div class="flex flex-col">
-      {/*
-      <FolderViewerControls />
-       */}
+    <div class="flex flex-col" classList={props.classList}>
       <NoteList />
     </div>
   );

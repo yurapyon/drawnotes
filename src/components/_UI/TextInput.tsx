@@ -1,7 +1,7 @@
 import { Component } from "solid-js";
+import { ClassProps } from "../_misc/ClassProps";
 
-interface TextInputProps {
-  classList?: Record<string, boolean | undefined>;
+interface TextInputProps extends ClassProps {
   placeholder?: string;
   value: string;
   onInput?: (

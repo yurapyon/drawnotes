@@ -1,12 +1,13 @@
-import { Component, Index, Show } from "solid-js";
+import { Component, Show } from "solid-js";
 import { useDataStoreContext } from "../_Providers/DataStoreProvider";
 import { trpc } from "~/lib/trpc-client";
 import { Note } from "@prisma/client";
 import { useAutosave } from "~/lib/Hooks/useAutosave";
-import { TextInput } from "../_UI/TextInput";
 import { NoteStatus } from "./NoteStatus";
+import { ClassProps } from "../_misc/ClassProps";
+import { Cursor } from "./Cursor";
 
-interface NoteEditProps {}
+interface NoteEditProps extends ClassProps {}
 
 export const NoteEdit: Component<NoteEditProps> = (props) => {
   const store = useDataStoreContext();
@@ -27,11 +28,16 @@ export const NoteEdit: Component<NoteEditProps> = (props) => {
           <Show when={note} fallback={"Error..."}>
             {(note) => {
               return (
-                <div class="flex flex-col">
+                <div class="flex flex-col" classList={props.classList}>
                   <NoteStatus
                     classList={{ "w-full": true }}
                     noteId={note().id}
                   />
+                  <div class="w-full min-h-0 grow relative">
+                    <div class="absolute w-full h-full">{note().text}</div>
+                    <Cursor classList={{ "absolute -z-10": true }} />
+                  </div>
+                  {/*
                   <textarea
                     class="grow min-h-0 resize-none bg-gray-200"
                     value={note().text}
@@ -40,6 +46,7 @@ export const NoteEdit: Component<NoteEditProps> = (props) => {
                       updateNote(note().id, { text });
                     }}
                   />
+                  */}
                 </div>
               );
             }}

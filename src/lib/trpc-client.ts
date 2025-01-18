@@ -1,5 +1,5 @@
 import { createTRPCClient, httpBatchLink, loggerLink } from "@trpc/client";
-import { getBaseUrl } from "./getBaseUrl";
+import { getBaseUrl } from "./utils/getBaseUrl";
 import { AppRouter } from "~/server/routers";
 import SuperJSON from "superjson";
 

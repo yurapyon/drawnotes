@@ -19,6 +19,7 @@ import {
   createEditorSliceAPI,
   EditorSliceAPI,
 } from "./slices/editor";
+import { Maths } from "../utils/maths";
 
 export interface DataStoreAPI {
   commands: CommandSliceAPI;
@@ -35,12 +36,36 @@ export const createDataStore = () => {
     autosave: createAutosaveSliceAPI(),
   });
 
-  return {
+  const functions = {
     commands: createCommandSlice(createStore(store.commands)),
     editor: createEditorSlice(createStore(store.editor)),
     notes: createNoteSlice(createStore(store.notes)),
     autosave: createAutosaveSlice(createStore(store.autosave)),
   };
+
+  const advanceSelectedNote = (amount: number) => {
+    const notes = functions.notes.getNotes();
+    if (!notes) return;
+
+    const sortedNotes = [...notes];
+    sortedNotes.sort((a, b) => {
+      return b.createdAt.getTime() - a.createdAt.getTime();
+    });
+
+    const currentNoteId = functions.editor.getCurrentNoteId();
+    if (!currentNoteId) return;
+
+    const currentNoteIndex = sortedNotes.findIndex(
+      (note) => note.id === currentNoteId
+    );
+    if (currentNoteIndex < 0) return;
+
+    const newIndex = Maths.mod(currentNoteIndex + amount, sortedNotes.length);
+    const newId = sortedNotes[newIndex].id;
+    functions.editor.setCurrentNoteId(newId);
+  };
+
+  return { ...functions, editor: { ...functions.editor, advanceSelectedNote } };
 };
 
 export type DataStore = ReturnType<typeof createDataStore>;

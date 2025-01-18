@@ -1,5 +1,5 @@
 import { createAuthClient } from "better-auth/solid";
-import { getBaseUrl } from "./getBaseUrl";
+import { getBaseUrl } from "./utils/getBaseUrl";
 
 export const authClient = createAuthClient({
   baseURL: getBaseUrl(),

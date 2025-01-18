@@ -1,20 +1,16 @@
 import { Component, Show } from "solid-js";
 import { useDataStoreContext } from "../_Providers/DataStoreProvider";
-import { useAutosave } from "~/lib/Hooks/useAutosave";
-import { Note } from "@prisma/client";
-import { trpc } from "~/lib/trpc-client";
-import { TextInput } from "../_UI/TextInput";
 import { formatDate } from "~/lib/utils/formatDate";
+import { ClassProps } from "../_misc/ClassProps";
+import { SaveIndicator } from "../_UI/SaveIndicator";
 
-interface NoteStatusProps {
-  classList?: Record<string, boolean | undefined>;
+interface NoteStatusProps extends ClassProps {
   noteId: string;
 }
 
 export const NoteStatus: Component<NoteStatusProps> = (props) => {
   const store = useDataStoreContext();
   const note = () => store.notes.getNote(props.noteId);
-  const isSaving = () => store.autosave.isSaving();
 
   return (
     <Show when={note()}>
@@ -29,16 +25,13 @@ export const NoteStatus: Component<NoteStatusProps> = (props) => {
                 <div>tag3</div>
               </div>
               <div class="grow min-h-0" />
-              <Show
-                when={!isSaving()}
-                fallback={
-                  <div class="bg-yellow-300 shrink-0 w-[10ch]">...</div>
-                }
-              >
-                <div class="bg-black text-white whitespace-nowrap">
-                  {dateString}
-                </div>
-              </Show>
+              <div class="w-[10ch] shrink-0">
+                <SaveIndicator classList={{ "w-full": true }}>
+                  <div class="bg-black text-white whitespace-nowrap">
+                    {dateString}
+                  </div>
+                </SaveIndicator>
+              </div>
             </div>
           </div>
         );
