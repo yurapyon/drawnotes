@@ -25,12 +25,11 @@ export const NoteStatus: Component<NoteStatusProps> = (props) => {
                 <div>tag3</div>
               </div>
               <div class="grow min-h-0" />
+              <SaveIndicator />
               <div class="w-[10ch] shrink-0">
-                <SaveIndicator classList={{ "w-full": true }}>
-                  <div class="bg-black text-white whitespace-nowrap">
-                    {dateString}
-                  </div>
-                </SaveIndicator>
+                <div class="bg-black text-white whitespace-nowrap">
+                  {dateString}
+                </div>
               </div>
             </div>
           </div>

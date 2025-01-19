@@ -1,5 +1,4 @@
-import { createStore, produce } from "solid-js/store";
-import { Editor } from "../editor/Editor";
+import { createStore } from "solid-js/store";
 import { Maths } from "../utils/maths";
 import {
   AutosaveSliceAPI,
@@ -74,37 +73,6 @@ export const createDataStore = () => {
       const newId = sortedNotes[newIndex].id;
       functions.editor.setCurrentNoteId(newId);
     },
-    handleKeyboardEvent: (ev: KeyboardEvent) => {
-      let wasHandled = false;
-      setStore(
-        produce((state) => {
-          const noteId = functions.editor.getCurrentNoteId();
-          if (!noteId) return null;
-          const note = state.notes.notes?.find((note) => note.id === noteId);
-
-          if (note) {
-            wasHandled = Editor.handleKeyboardEvent(
-              state.editor.editor,
-              ev,
-              note.lineBuffer
-            );
-          }
-        })
-      );
-      return wasHandled;
-    },
-    /*
-    insertTextAtCursor: (text: string) => {
-      setStore(
-        produce((store) => {
-          const currentLineBuffer = getSelectedNote()?.lineBuffer;
-          if (currentLineBuffer) {
-            Editor.paste(store.editor.editor, currentLineBuffer, text);
-          }
-        })
-      );
-    },
-    */
   };
 
   return {

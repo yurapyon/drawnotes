@@ -3,7 +3,7 @@ import { createUniqueId } from "solid-js";
 import { useDataStoreContext } from "~/components/_Providers/DataStoreProvider";
 
 interface UseAutosaveProps<Args extends any[]> {
-  immediate: (...args: Args) => void;
+  immediate?: (...args: Args) => void;
   debounced: (...args: Args) => Promise<void>;
   delay?: number;
 }
@@ -27,7 +27,7 @@ export const useAutosave = <Args extends any[]>({
 
   const update = (...args: Args) => {
     store.autosave.startSaving(id);
-    immediate(...args);
+    immediate?.(...args);
     debouncedUpdateDB(...args);
   };
 

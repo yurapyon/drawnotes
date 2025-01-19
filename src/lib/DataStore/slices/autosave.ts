@@ -18,7 +18,9 @@ export const createAutosaveSlice = (
 
   return {
     startSaving: (id: string) => {
-      setStore("saveStatuses", store.saveStatuses.length, id);
+      setStore("saveStatuses", (previousStatuses) => {
+        return [...previousStatuses, id];
+      });
     },
     stopSaving: (id: string) => {
       setStore("saveStatuses", (previousStatuses) => {

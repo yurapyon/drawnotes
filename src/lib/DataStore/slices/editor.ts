@@ -1,5 +1,4 @@
 import { SetStoreFunction } from "solid-js/store";
-import { EditingMode, Editor } from "~/lib/editor/Editor";
 
 export interface EditorSliceAPI {
   // Saved in DB
@@ -9,8 +8,6 @@ export interface EditorSliceAPI {
   // Not saved
   leftSidebarOpen: boolean;
   rightSidebarOpen: boolean;
-
-  editor: Editor;
 }
 
 export const createEditorSliceAPI = () => {
@@ -18,7 +15,6 @@ export const createEditorSliceAPI = () => {
     currentNoteId: null,
     leftSidebarOpen: true,
     rightSidebarOpen: false,
-    editor: Editor.create(),
   };
   return ret;
 };
@@ -44,15 +40,6 @@ export const createEditorSlice = (
       } else {
         setStore("rightSidebarOpen", !store.rightSidebarOpen);
       }
-    },
-    setCurrentMode: (to: EditingMode) => {
-      setStore("editor", "mode", to);
-    },
-    getCurrentMode: () => {
-      return store.editor.mode;
-    },
-    getCursor: () => {
-      return store.editor.cursor;
     },
   };
 };

@@ -10,16 +10,9 @@ export enum EditingMode {
   VisualLine = "visual-line",
 }
 
-export interface EditorSignals {
-  onSelectionChange: (s: Selection) => void;
-  onCursorChange: (c: Cursor) => void;
-  onLinesChange: (lines: string[]) => void;
-}
-
 export interface Editor {
   mode: EditingMode;
   cursor: Cursor;
-  clipboard: string[];
   selection: Selection | null;
 }
 
@@ -28,7 +21,6 @@ export namespace Editor {
     return {
       mode: EditingMode.Normal,
       cursor: Cursor.create(),
-      clipboard: [],
       selection: null,
     };
   };
@@ -59,7 +51,7 @@ export namespace Editor {
         buffer.lines,
         e.mode === EditingMode.VisualLine
       );
-      e.clipboard = copiedLines;
+      return copiedLines;
     }
   };
 
@@ -70,8 +62,8 @@ export namespace Editor {
         buffer.lines,
         e.mode === EditingMode.VisualLine
       );
-      e.clipboard = copiedLines;
       buffer.lines = newLines;
+      return copiedLines;
     }
   };
 
@@ -87,9 +79,11 @@ export namespace Editor {
     let idx = e.cursor.actual.y;
     if (!insertBefore) {
       idx += 1;
-      moveCursorY(e, buffer, 1);
     }
     LineBuffer.insertBlankLine(buffer, idx);
+    if (!insertBefore) {
+      moveCursorY(e, buffer, 1);
+    }
     // TODO insert move cursor.x based on the whitespace of the new line
   };
 
@@ -99,6 +93,12 @@ export namespace Editor {
     buffer: LineBuffer
   ) => {
     let wasHandled = false;
+    let wasChanged = {
+      cursor: false,
+      buffer: false,
+      selection: false,
+      mode: false,
+    };
 
     switch (e.mode) {
       case EditingMode.Normal:
@@ -107,34 +107,49 @@ export namespace Editor {
             case "h":
               moveCursorX(e, buffer, -1);
               wasHandled = true;
+              wasChanged.cursor = true;
               break;
             case "j":
               moveCursorY(e, buffer, 1);
               wasHandled = true;
+              wasChanged.cursor = true;
               break;
             case "k":
               moveCursorY(e, buffer, -1);
               wasHandled = true;
+              wasChanged.cursor = true;
               break;
             case "l":
               moveCursorX(e, buffer, 1);
               wasHandled = true;
+              wasChanged.cursor = true;
               break;
             case "O":
               insertBlankLine(e, buffer, true);
+              e.mode = EditingMode.Insert;
               wasHandled = true;
+              wasChanged.cursor = true;
+              wasChanged.mode = true;
+              wasChanged.buffer = true;
               break;
             case "o":
               insertBlankLine(e, buffer, false);
+              e.mode = EditingMode.Insert;
               wasHandled = true;
+              wasChanged.cursor = true;
+              wasChanged.mode = true;
+              wasChanged.buffer = true;
               break;
             case "i":
               e.mode = EditingMode.Insert;
               wasHandled = true;
+              wasChanged.mode = true;
               break;
             case "p":
               paste(e, buffer, "asdf\n");
               wasHandled = true;
+              wasChanged.cursor = true;
+              wasChanged.buffer = true;
               break;
           }
         }
@@ -144,6 +159,8 @@ export namespace Editor {
           if (isCharacterKey(ev)) {
             paste(e, buffer, ev.key);
             moveCursorX(e, buffer, 1);
+            wasChanged.cursor = true;
+            wasChanged.buffer = true;
             wasHandled = true;
           } else {
             switch (ev.key) {
@@ -154,11 +171,14 @@ export namespace Editor {
                 moveCursorY(e, buffer, 1);
                 Cursor.setX(e.cursor, 0);
                 wasHandled = true;
+                wasChanged.cursor = true;
+                wasChanged.buffer = true;
                 break;
               case "Escape":
                 ev.preventDefault();
                 e.mode = EditingMode.Normal;
                 wasHandled = true;
+                wasChanged.mode = true;
                 break;
             }
           }
@@ -166,6 +186,6 @@ export namespace Editor {
         break;
     }
 
-    return wasHandled;
+    return { wasHandled, wasChanged };
   };
 }

@@ -15,10 +15,6 @@ const Dashboard: Component = () => {
 
   onMount(() => {
     window.addEventListener("keydown", (ev: KeyboardEvent) => {
-      if (store.editor.handleKeyboardEvent(ev)) {
-        return;
-      }
-
       switch (ev.key) {
         case "ArrowLeft":
           store.editor.toggleSidebar(true);
@@ -27,9 +23,11 @@ const Dashboard: Component = () => {
           store.editor.toggleSidebar(false);
           break;
         case "ArrowUp":
+          // TODO update settings in db
           store.editor.advanceSelectedNote(-1);
           break;
         case "ArrowDown":
+          // TODO update settings in db
           store.editor.advanceSelectedNote(1);
           break;
         case ":":

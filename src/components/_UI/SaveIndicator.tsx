@@ -1,21 +1,13 @@
-import { ParentComponent, Show } from "solid-js";
-import { ClassProps } from "../_misc/ClassProps";
+import { Component, Show } from "solid-js";
 import { useDataStoreContext } from "../_Providers/DataStoreProvider";
 
-export interface SaveIndicatorProps extends ClassProps {}
+export interface SaveIndicatorProps {}
 
-export const SaveIndicator: ParentComponent<SaveIndicatorProps> = (props) => {
+export const SaveIndicator: Component<SaveIndicatorProps> = (props) => {
   const store = useDataStoreContext();
   return (
-    <Show
-      when={!store.autosave.isSaving()}
-      fallback={
-        <div class="bg-yellow-300 text-right" classList={props.classList}>
-          ...
-        </div>
-      }
-    >
-      {props.children}
+    <Show when={store.autosave.isSaving()}>
+      <div class="bg-yellow-300">*</div>
     </Show>
   );
 };

@@ -19,6 +19,10 @@ export namespace LineBuffer {
     buffer.lines = splitText(text);
   };
 
+  export const toText = (buffer: LineBuffer) => {
+    return buffer.lines.join("");
+  };
+
   export const insertText = (
     buffer: LineBuffer,
     text: string,

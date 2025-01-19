@@ -57,6 +57,7 @@ export const createNoteSlice = (
         createdAt: new Date(),
         lineBuffer: LineBuffer.create(),
       };
+      LineBuffer.setFromText(newNote.lineBuffer, "");
       setStore((previousStore) => {
         if (previousStore.notes === null) {
           return previousStore;
@@ -72,7 +73,7 @@ export const createNoteSlice = (
     getNote: (noteId: string) => {
       return store.notes?.find((note) => note.id === noteId) || null;
     },
-    updateNote: (noteId: string, updateObject: Partial<Note>) => {
+    updateNote: (noteId: string, updateObject: Partial<ClientSideNode>) => {
       setStore("notes", (note) => note.id === noteId, updateObject);
     },
   };

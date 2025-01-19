@@ -1,7 +1,9 @@
+import { Note } from "@prisma/client";
 import { Component, Index } from "solid-js";
-import { useDataStoreContext } from "../_Providers/DataStoreProvider";
-import { trpc } from "~/lib/trpc-client";
 import { useAutosave } from "~/lib/Hooks/useAutosave";
+import { trpc } from "~/lib/trpc-client";
+import { useDataStoreContext } from "../_Providers/DataStoreProvider";
+import { NameEditor } from "../_UI/NameEditor";
 
 export const NoteList: Component = () => {
   const store = useDataStoreContext();
@@ -19,13 +21,21 @@ export const NoteList: Component = () => {
     return newNotes;
   };
 
-  const updateSelectedNote = useAutosave({
+  const selectNote = useAutosave({
     immediate: (noteId) => store.editor.setCurrentNoteId(noteId),
     debounced: async (noteId) =>
       trpc.user.updateUserSettings.mutate({
         lastEditedNoteId: noteId,
       }),
     delay: 100,
+  });
+
+  const updateNote = useAutosave({
+    immediate: store.notes.updateNote,
+    debounced: async (id: string, updateObject: Partial<Note>) => {
+      await trpc.note.updateNote.mutate({ id, updateObject });
+    },
+    delay: 500,
   });
 
   return (
@@ -35,18 +45,24 @@ export const NoteList: Component = () => {
           const isSelected = () =>
             store.editor.getCurrentNoteId() === note().id;
           return (
-            <div
-              class="select-none"
-              classList={{
-                "bg-gray-200 cursor-auto": isSelected(),
-                "hover:bg-gray-200 cursor-pointer": true,
-              }}
-              onClick={() => {
-                updateSelectedNote(note().id);
-              }}
+            <NameEditor
+              value={note().title}
+              onConfirm={(title) => updateNote(note().id, { title })}
+              reverseUI
             >
-              {note().title || <span class="text-gray-500">untitled</span>}
-            </div>
+              <div
+                class="select-none"
+                classList={{
+                  "bg-gray-200 cursor-auto": isSelected(),
+                  "hover:bg-gray-200 cursor-pointer": true,
+                }}
+                onClick={() => {
+                  selectNote(note().id);
+                }}
+              >
+                {note().title || <span class="text-gray-500">untitled</span>}
+              </div>
+            </NameEditor>
           );
         }}
       </Index>
