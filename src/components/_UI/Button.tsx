@@ -16,6 +16,7 @@ interface ButtonProps {
 export const Button: ParentComponent<ButtonProps> = (props) => {
   return (
     <button
+      class="px-[1ch]"
       classList={{
         "bg-white text-black hover:bg-black hover:text-white":
           !props.variant || props.variant === ButtonVariant.Normal,

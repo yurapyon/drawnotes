@@ -71,6 +71,28 @@ export namespace Editor {
     LineBuffer.insertText(buffer, text, e.cursor.actual.x, e.cursor.actual.y);
   };
 
+  export const backspace = (e: Editor, buffer: LineBuffer) => {
+    const { x, y } = e.cursor.actual;
+
+    if (x === 0) {
+      if (y === 0) {
+        // do nothing
+      } else {
+        const currentLine = buffer.lines[y];
+        const targetLine = buffer.lines[y - 1];
+        const newLine = targetLine + currentLine;
+        buffer.lines.splice(y - 1, 2, newLine);
+        Cursor.setX(e.cursor, targetLine.length);
+        moveCursorY(e, buffer, -1);
+      }
+    } else {
+      const currentLine = buffer.lines[y];
+      buffer.lines[y] =
+        currentLine.substring(0, x - 1) + currentLine.substring(x);
+      moveCursorX(e, buffer, -1);
+    }
+  };
+
   export const insertBlankLine = (
     e: Editor,
     buffer: LineBuffer,
@@ -164,6 +186,19 @@ export namespace Editor {
             wasHandled = true;
           } else {
             switch (ev.key) {
+              case "Backspace":
+                Editor.backspace(e, buffer);
+                // TODO move to previous line
+                wasChanged.cursor = true;
+                wasChanged.buffer = true;
+                break;
+              case "Tab":
+                ev.preventDefault();
+                paste(e, buffer, "  ");
+                moveCursorX(e, buffer, 2);
+                wasChanged.cursor = true;
+                wasChanged.buffer = true;
+                break;
               case "Enter":
                 // TODO move cursor to start of new line
                 ev.preventDefault();

@@ -6,7 +6,6 @@ import { useAutosave } from "~/lib/Hooks/useAutosave";
 import { trpc } from "~/lib/trpc-client";
 import { useDataStoreContext } from "./_Providers/DataStoreProvider";
 import { CommandBar } from "./CommandBar/CommandBar";
-import { NoteStatus } from "./NoteEdit/NoteStatus";
 import { VimEdit } from "./NoteEdit/VimEdit";
 
 export const Editor: Component = () => {
@@ -27,7 +26,7 @@ export const Editor: Component = () => {
 
   return (
     <div class="flex flex-col w-full h-full">
-      <div class="w-full h-full flex flex-row">
+      <div class="w-full h-full flex flex-row gap-[1ch]">
         <Show when={leftSidebarOpen()}>
           <Browser classList={{ "w-[30ch] shrink-0": true }} />
         </Show>
@@ -35,7 +34,6 @@ export const Editor: Component = () => {
           {(note) => {
             return (
               <div class="flex flex-col w-full h-full">
-                <NoteStatus classList={{ "w-full": true }} noteId={note.id} />
                 <VimEdit
                   classList={{ "w-full grow min-h-0": true }}
                   buffer={note.lineBuffer}

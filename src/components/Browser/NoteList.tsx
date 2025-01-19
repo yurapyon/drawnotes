@@ -1,9 +1,7 @@
-import { Note } from "@prisma/client";
 import { Component, Index } from "solid-js";
 import { useAutosave } from "~/lib/Hooks/useAutosave";
 import { trpc } from "~/lib/trpc-client";
 import { useDataStoreContext } from "../_Providers/DataStoreProvider";
-import { NameEditor } from "../_UI/NameEditor";
 
 export const NoteList: Component = () => {
   const store = useDataStoreContext();
@@ -30,14 +28,6 @@ export const NoteList: Component = () => {
     delay: 100,
   });
 
-  const updateNote = useAutosave({
-    immediate: store.notes.updateNote,
-    debounced: async (id: string, updateObject: Partial<Note>) => {
-      await trpc.note.updateNote.mutate({ id, updateObject });
-    },
-    delay: 500,
-  });
-
   return (
     <div class="flex flex-col h-full">
       <Index each={sortedNotes()}>
@@ -45,24 +35,18 @@ export const NoteList: Component = () => {
           const isSelected = () =>
             store.editor.getCurrentNoteId() === note().id;
           return (
-            <NameEditor
-              value={note().title}
-              onConfirm={(title) => updateNote(note().id, { title })}
-              reverseUI
+            <div
+              class="select-none"
+              classList={{
+                "bg-gray-200 cursor-auto": isSelected(),
+                "hover:bg-gray-200 cursor-pointer": true,
+              }}
+              onClick={() => {
+                selectNote(note().id);
+              }}
             >
-              <div
-                class="select-none"
-                classList={{
-                  "bg-gray-200 cursor-auto": isSelected(),
-                  "hover:bg-gray-200 cursor-pointer": true,
-                }}
-                onClick={() => {
-                  selectNote(note().id);
-                }}
-              >
-                {note().title || <span class="text-gray-500">untitled</span>}
-              </div>
-            </NameEditor>
+              {note().title || <span class="text-gray-500">untitled</span>}
+            </div>
           );
         }}
       </Index>
