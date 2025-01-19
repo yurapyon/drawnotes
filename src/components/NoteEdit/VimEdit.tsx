@@ -2,7 +2,45 @@ import { Component, createSignal, Index, onMount } from "solid-js";
 import { EditingMode, Editor } from "~/lib/editor/Editor";
 import { LineBuffer } from "~/lib/editor/LineBuffer";
 import { ClassProps } from "../_misc/ClassProps";
+import { useDataStoreContext } from "../_Providers/DataStoreProvider";
 import { Cursor } from "./Cursor";
+
+interface LineProps {
+  line: string;
+  lineNumber: number;
+  pad: number;
+}
+
+const Line: Component<LineProps> = (props) => {
+  const lineNumber = () => {
+    const actualPad = Math.max(2, props.pad);
+    return props.lineNumber.toString().padStart(actualPad, "0");
+  };
+
+  let trailingWhitespaceCount = () => {
+    const str = props.line;
+    let i = str.length;
+    for (; i > 0; i--) {
+      if (str[i - 1] !== " ") {
+        break;
+      }
+    }
+    return str.length - i;
+  };
+
+  const whitespace = () => ".".repeat(trailingWhitespaceCount());
+  const trimmed = () => props.line.trimEnd();
+
+  return (
+    <div class="flex flex-row h-[1lh] whitespace-pre">
+      <span class="text-dn-gray group-focus:text-dn-gray-light whitespace-pre">
+        {lineNumber()}{" "}
+      </span>
+      {trimmed()}
+      <span class="text-blue-300">{whitespace()}</span>
+    </div>
+  );
+};
 
 interface VimEditProps extends ClassProps {
   buffer: LineBuffer;
@@ -10,15 +48,18 @@ interface VimEditProps extends ClassProps {
 }
 
 export const VimEdit: Component<VimEditProps> = (props) => {
+  const store = useDataStoreContext();
+
   const editor = Editor.create();
 
   const [localCursor, setLocalCursor] = createSignal(editor.cursor);
-  const [localMode, setLocalMode] = createSignal(editor.mode);
 
   let textInput!: HTMLInputElement;
   onMount(() => {
     textInput.focus();
   });
+
+  const lineNumberPad = () => Math.ceil(Math.log10(props.buffer.lines.length));
 
   return (
     <div
@@ -45,40 +86,16 @@ export const VimEdit: Component<VimEditProps> = (props) => {
           });
         }
         if (wasChanged.mode) {
-          setLocalMode(editor.mode);
+          store.editor.setMode(editor.mode);
         }
       }}
       tabIndex={0}
     >
       <div class="w-full min-h-full absolute text-white z-20">
         <Index each={props.buffer.lines}>
-          {(line, i) => {
-            // TODO max len
-            const lineNumber = `${i.toString().padStart(2, "0")} `;
-            let trailingWhitespaceCount = () => {
-              const str = line();
-              let i = str.length;
-              for (; i > 0; i--) {
-                if (str[i - 1] !== " ") {
-                  break;
-                }
-              }
-              return str.length - i;
-            };
-            const whitespace = () => ".".repeat(trailingWhitespaceCount());
-            const trimmed = () => line().trimEnd();
-            return (
-              <div class="flex flex-row">
-                <span class="text-dn-gray group-focus:text-dn-gray-light whitespace-pre">
-                  {lineNumber}
-                </span>
-                <div class="h-[1lh] whitespace-pre">
-                  {trimmed()}
-                  <span class="text-blue-300">{whitespace()}</span>
-                </div>
-              </div>
-            );
-          }}
+          {(line, i) => (
+            <Line line={line()} lineNumber={i} pad={lineNumberPad()} />
+          )}
         </Index>
       </div>
       <Cursor
@@ -88,9 +105,9 @@ export const VimEdit: Component<VimEditProps> = (props) => {
         cursorClassList={{
           "border border-dn-gray": true,
           "group-focus:bg-mode-normal group-focus:border-0 w-full":
-            localMode() === EditingMode.Normal,
+            store.editor.getMode() === EditingMode.Normal,
           "group-focus:bg-mode-insert group-focus:border-0 w-[0.25ch]":
-            localMode() === EditingMode.Insert,
+            store.editor.getMode() === EditingMode.Insert,
         }}
       />
       <div

@@ -2,6 +2,7 @@ import { Title } from "@solidjs/meta";
 import { createResource, onMount, Show, type Component } from "solid-js";
 import { useDataStoreContext } from "~/components/_Providers/DataStoreProvider";
 import { Editor } from "~/components/Editor";
+import { EditingMode } from "~/lib/editor/Editor";
 import { trpc } from "~/lib/trpc-client";
 
 const Dashboard: Component = () => {
@@ -31,7 +32,9 @@ const Dashboard: Component = () => {
           store.editor.advanceSelectedNote(1);
           break;
         case ":":
-          store.commands.startCommandEntry();
+          if (store.editor.getMode() !== EditingMode.Insert) {
+            store.commands.startCommandEntry();
+          }
           break;
         case "Escape":
           ev.preventDefault();

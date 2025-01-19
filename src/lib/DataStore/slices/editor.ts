@@ -1,3 +1,4 @@
+import { EditingMode } from "~/lib/editor/Editor";
 import { CreateStoreReturn } from "../DataStore";
 
 export interface EditorSliceAPI {
@@ -8,6 +9,10 @@ export interface EditorSliceAPI {
   // Not saved
   leftSidebarOpen: boolean;
   rightSidebarOpen: boolean;
+
+  // TODO NODE
+  // This won't work as well if you allow multipled VimEdit boxes
+  mode: EditingMode;
 }
 
 export const createEditorSliceAPI = () => {
@@ -15,6 +20,7 @@ export const createEditorSliceAPI = () => {
     currentNoteId: null,
     leftSidebarOpen: true,
     rightSidebarOpen: false,
+    mode: EditingMode.Normal,
   };
   return ret;
 };
@@ -40,6 +46,12 @@ export const createEditorSlice = (
       } else {
         setStore("rightSidebarOpen", !store.rightSidebarOpen);
       }
+    },
+    setMode: (mode: EditingMode) => {
+      setStore("mode", mode);
+    },
+    getMode: () => {
+      return store.mode;
     },
   };
 };

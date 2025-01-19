@@ -1,7 +1,8 @@
 import { Component, createSignal, Show } from "solid-js";
 import { Browser } from "~/components/Browser/Browser";
-import { SettingsButton } from "./Settings/SettingsButton";
 import { ClassProps } from "./_misc/ClassProps";
+import { Settings } from "./Settings/Settings";
+import { SettingsButton } from "./Settings/SettingsButton";
 
 export interface LeftSidebarProps extends ClassProps {}
 
@@ -17,15 +18,12 @@ export const LeftSidebar: Component<LeftSidebarProps> = (props) => {
         ...props.classList,
       }}
     >
-      <div class="grow min-h-0 pr-[1ch]">
+      <div class="grow min-h-0">
         <Show when={!showSettings()}>
-          <Browser classList={{ "h-full": true }} />
+          <Browser classList={{ "w-full h-full": true }} />
         </Show>
         <Show when={showSettings()}>
-          <div class="flex flex-col h-full">
-            <div>tags</div>
-            <div>vim mode</div>
-          </div>
+          <Settings />
         </Show>
       </div>
       <SettingsButton
