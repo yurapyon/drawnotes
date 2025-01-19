@@ -1,4 +1,4 @@
-import { SetStoreFunction } from "solid-js/store";
+import { CreateStoreReturn } from "../DataStore";
 
 export interface EditorSliceAPI {
   // Saved in DB
@@ -20,7 +20,7 @@ export const createEditorSliceAPI = () => {
 };
 
 export const createEditorSlice = (
-  storeSetStore: [EditorSliceAPI, SetStoreFunction<EditorSliceAPI>]
+  storeSetStore: CreateStoreReturn<EditorSliceAPI>
 ) => {
   const [store, setStore] = storeSetStore;
 

@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
+import { z } from "zod";
 import { prisma } from "../prisma";
 import { protectedProcedure, router } from "../trpc";
-import { z } from "zod";
 
 export const userRouter = router({
   getUserSettings: protectedProcedure.query(async ({ ctx }) => {
@@ -35,4 +35,17 @@ export const userRouter = router({
         data: input,
       });
     }),
+
+  getTags: protectedProcedure.input(z.undefined()).query(async ({ ctx }) => {
+    const tags = await prisma.user.findUnique({
+      where: { id: ctx.session.user.id },
+      include: { tags: true },
+    });
+
+    if (!tags) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+
+    return tags;
+  }),
 });

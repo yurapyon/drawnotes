@@ -8,7 +8,20 @@ export default {
     fontFamily: {
       mono: ["Courier", ...defaultTheme.fontFamily.mono],
     },
-    extend: {},
+    extend: {
+      colors: {
+        "dn-gray": {
+          light: "#707070",
+          DEFAULT: "#505050",
+          dark: "#303030",
+          darker: "#141414",
+        },
+        mode: {
+          insert: "#007020",
+          normal: "#6060a0",
+        },
+      },
+    },
   },
   plugins: [],
 };

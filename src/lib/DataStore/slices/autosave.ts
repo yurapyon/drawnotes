@@ -1,4 +1,4 @@
-import { SetStoreFunction } from "solid-js/store";
+import { CreateStoreReturn } from "../DataStore";
 
 export interface AutosaveSliceAPI {
   saveStatuses: string[];
@@ -12,7 +12,7 @@ export const createAutosaveSliceAPI = () => {
 };
 
 export const createAutosaveSlice = (
-  storeSetStore: [AutosaveSliceAPI, SetStoreFunction<AutosaveSliceAPI>]
+  storeSetStore: CreateStoreReturn<AutosaveSliceAPI>
 ) => {
   const [store, setStore] = storeSetStore;
 

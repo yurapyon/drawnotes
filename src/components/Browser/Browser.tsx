@@ -10,7 +10,10 @@ export const Browser: Component<BrowserProps> = (props) => {
   const store = useDataStoreContext();
 
   return (
-    <div class="flex flex-col gap-[1lh]" classList={props.classList}>
+    <div
+      class="flex flex-col gap-[1lh] bg-dn-gray-dark text-white"
+      classList={props.classList}
+    >
       <NoteStatus noteId={store.editor.getCurrentNoteId()!} />
       <NoteList />
     </div>

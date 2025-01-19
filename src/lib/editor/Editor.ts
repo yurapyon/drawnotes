@@ -122,6 +122,8 @@ export namespace Editor {
       mode: false,
     };
 
+    ev.preventDefault();
+
     switch (e.mode) {
       case EditingMode.Normal:
         {
@@ -167,6 +169,14 @@ export namespace Editor {
               wasHandled = true;
               wasChanged.mode = true;
               break;
+            case "A":
+              const currentLine = buffer.lines[e.cursor.actual.y];
+              Cursor.setX(e.cursor, currentLine.length);
+              e.mode = EditingMode.Insert;
+              wasHandled = true;
+              wasChanged.cursor = true;
+              wasChanged.mode = true;
+              break;
             case "p":
               paste(e, buffer, "asdf\n");
               wasHandled = true;
@@ -193,7 +203,6 @@ export namespace Editor {
                 wasChanged.buffer = true;
                 break;
               case "Tab":
-                ev.preventDefault();
                 paste(e, buffer, "  ");
                 moveCursorX(e, buffer, 2);
                 wasChanged.cursor = true;
@@ -201,7 +210,6 @@ export namespace Editor {
                 break;
               case "Enter":
                 // TODO move cursor to start of new line
-                ev.preventDefault();
                 paste(e, buffer, "\n");
                 moveCursorY(e, buffer, 1);
                 Cursor.setX(e.cursor, 0);
@@ -210,7 +218,6 @@ export namespace Editor {
                 wasChanged.buffer = true;
                 break;
               case "Escape":
-                ev.preventDefault();
                 e.mode = EditingMode.Normal;
                 wasHandled = true;
                 wasChanged.mode = true;

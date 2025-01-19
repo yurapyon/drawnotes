@@ -22,7 +22,7 @@ export const VimEdit: Component<VimEditProps> = (props) => {
 
   return (
     <div
-      class="relative group focus:outline-none"
+      class="relative group focus:outline-none overflow-y-auto"
       classList={props.classList}
       ref={textInput}
       onKeyDown={(e) => {
@@ -50,7 +50,7 @@ export const VimEdit: Component<VimEditProps> = (props) => {
       }}
       tabIndex={0}
     >
-      <div class="w-full h-full absolute">
+      <div class="w-full min-h-full absolute text-white z-20">
         <Index each={props.buffer.lines}>
           {(line, i) => {
             // TODO max len
@@ -69,10 +69,7 @@ export const VimEdit: Component<VimEditProps> = (props) => {
             const trimmed = () => line().trimEnd();
             return (
               <div class="flex flex-row">
-                <span
-                  class="text-gray-200 whitespace-pre"
-                  classList={{ "group-focus:text-gray-500": true }}
-                >
+                <span class="text-dn-gray group-focus:text-dn-gray-light whitespace-pre">
                   {lineNumber}
                 </span>
                 <div class="h-[1lh] whitespace-pre">
@@ -85,19 +82,23 @@ export const VimEdit: Component<VimEditProps> = (props) => {
         </Index>
       </div>
       <Cursor
-        classList={{ "absolute -z-10": true }}
+        classList={{ "absolute z-10": true }}
         x={localCursor().actual.x + 3}
         y={localCursor().actual.y}
-        editingMode={localMode()}
         cursorClassList={{
-          "border border-gray-200": true,
-          "group-focus:bg-blue-300 group-focus:border-0 w-full":
+          "border border-dn-gray": true,
+          "group-focus:bg-mode-normal group-focus:border-0 w-full":
             localMode() === EditingMode.Normal,
-          "group-focus:bg-green-300 group-focus:border-0 w-[0.25ch]":
+          "group-focus:bg-mode-insert group-focus:border-0 w-[0.25ch]":
             localMode() === EditingMode.Insert,
         }}
       />
-      <div class="w-full h-full absolute -z-20 group-focus:bg-gray-100" />
+      <div
+        class="w-full min-h-full absolute group-focus:bg-dn-gray-darker bg-dn-gray-dark"
+        style={{
+          height: `${props.buffer.lines.length}lh`,
+        }}
+      />
     </div>
   );
 };

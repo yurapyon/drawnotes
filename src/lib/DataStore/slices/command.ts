@@ -1,4 +1,4 @@
-import { SetStoreFunction } from "solid-js/store";
+import { CreateStoreReturn } from "../DataStore";
 
 export interface CommandSliceAPI {
   isEnteringCommand: boolean;
@@ -16,7 +16,7 @@ export const createCommandSliceAPI = () => {
 };
 
 export const createCommandSlice = (
-  storeSetStore: [CommandSliceAPI, SetStoreFunction<CommandSliceAPI>]
+  storeSetStore: CreateStoreReturn<CommandSliceAPI>
 ) => {
   const [store, setStore] = storeSetStore;
   return {

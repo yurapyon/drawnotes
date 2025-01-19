@@ -1,13 +1,10 @@
 import { Component, createEffect } from "solid-js";
+import { trpc } from "~/lib/trpc-client";
 import { useDataStoreContext } from "../_Providers/DataStoreProvider";
 import { TextInput } from "../_UI/TextInput";
-import { trpc } from "~/lib/trpc-client";
-import { useRequiredAuth } from "../_Providers/RequiredAuthProvider";
 
 export const CommandBar: Component = () => {
   const store = useDataStoreContext();
-
-  const session = useRequiredAuth();
 
   // TODO need to handle onBlur
   let textInput!: HTMLInputElement;
@@ -30,8 +27,8 @@ export const CommandBar: Component = () => {
           const cmd = store.commands.stopCommandEntry();
           const command = cmd.trim();
           if (command === "new") {
-            const newNote = store.notes.addNote(session.user.id);
-            trpc.note.createNote.mutate(newNote);
+            const newNote = store.notes.addNote();
+            trpc.note.create.mutate(newNote);
             store.editor.setCurrentNoteId(newNote.id);
             // TODO focus the main editor?
           }

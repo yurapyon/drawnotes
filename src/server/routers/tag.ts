@@ -1,32 +1,23 @@
 import { z } from "zod";
-import { NoteSchema } from "../../../prisma/generated/zod";
+import { TagSchema } from "../../../prisma/generated/zod";
 import { prisma } from "../prisma";
 import { protectedProcedure, router } from "../trpc";
 
-export const noteRouter = router({
-  getAllWithTags: protectedProcedure.query(async ({ ctx }) => {
-    const userId = ctx.session.user.id;
-    const notes = await prisma.note.findMany({
-      where: { userId },
-      include: { tags: true },
-    });
-    return notes;
-  }),
-
+export const tagRouter = router({
   create: protectedProcedure
-    .input(NoteSchema)
+    .input(TagSchema)
     .mutation(async ({ input, ctx }) => {
       const userId = ctx.session.user.id;
-      await prisma.note.create({
+      await prisma.tag.create({
         data: { ...input, userId },
       });
     }),
 
   updateById: protectedProcedure
-    .input(z.object({ id: z.string(), updateObject: NoteSchema.partial() }))
+    .input(z.object({ id: z.string(), updateObject: TagSchema.partial() }))
     .mutation(async ({ input, ctx }) => {
       const userId = ctx.session.user.id;
-      await prisma.note.update({
+      await prisma.tag.update({
         where: { id: input.id, userId },
         data: { ...input.updateObject },
       });

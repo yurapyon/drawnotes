@@ -1,8 +1,9 @@
 import { Note, Tag } from "@prisma/client";
-import { SetStoreFunction } from "solid-js/store";
-import { v4 as uuidv4 } from "uuid";
+import { useRequiredAuth } from "~/components/_Providers/RequiredAuthProvider";
 import { LineBuffer } from "~/lib/editor/LineBuffer";
 import { trpc } from "~/lib/trpc-client";
+import { createId } from "~/lib/utils/createId";
+import { CreateStoreReturn } from "../DataStore";
 
 interface ClientSideNode extends Note {
   tags: Tag[];
@@ -21,9 +22,11 @@ export const createNoteSliceAPI = () => {
 };
 
 export const createNoteSlice = (
-  storeSetStore: [NoteSliceAPI, SetStoreFunction<NoteSliceAPI>]
+  storeSetStore: CreateStoreReturn<NoteSliceAPI>
 ) => {
   const [store, setStore] = storeSetStore;
+
+  const session = useRequiredAuth();
 
   const loadNotes = async () => {
     if (store.notes === null) {
@@ -47,12 +50,12 @@ export const createNoteSlice = (
     getNotes: () => {
       return store.notes;
     },
-    addNote: (userId: string) => {
+    addNote: () => {
       const newNote: ClientSideNode = {
-        id: uuidv4(),
+        id: createId(),
         title: "",
         text: "",
-        userId,
+        userId: session.user.id,
         tags: [],
         createdAt: new Date(),
         lineBuffer: LineBuffer.create(),

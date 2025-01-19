@@ -21,6 +21,10 @@ import {
   NoteSliceAPI,
 } from "./slices/note";
 
+export type CreateStoreReturn<T extends object> = ReturnType<
+  typeof createStore<T>
+>;
+
 export interface DataStoreAPI {
   commands: CommandSliceAPI;
   editor: EditorSliceAPI;

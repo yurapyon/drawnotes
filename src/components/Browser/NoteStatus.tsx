@@ -19,7 +19,7 @@ export const NoteStatus: Component<NoteStatusProps> = (props) => {
   const updateNote = useAutosave({
     immediate: store.notes.updateNote,
     debounced: async (id: string, updateObject: Partial<Note>) => {
-      await trpc.note.updateNote.mutate({ id, updateObject });
+      await trpc.note.updateById.mutate({ id, updateObject });
     },
     delay: 500,
   });
@@ -35,7 +35,7 @@ export const NoteStatus: Component<NoteStatusProps> = (props) => {
               onConfirm={(title) => updateNote(note.id, { title })}
             >
               <div>
-                {note.title || <span class="text-gray-500">untitled</span>}
+                {note.title || <span class="text-dn-gray-light">untitled</span>}
               </div>
             </NameEditor>
             <div class="flex flex-row w-full">

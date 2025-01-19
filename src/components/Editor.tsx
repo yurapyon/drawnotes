@@ -1,11 +1,11 @@
 import { Component, Show } from "solid-js";
-import { Browser } from "~/components/Browser/Browser";
 import { ImageViewer } from "~/components/ImageViewer/ImageViewer";
 import { LineBuffer } from "~/lib/editor/LineBuffer";
 import { useAutosave } from "~/lib/Hooks/useAutosave";
 import { trpc } from "~/lib/trpc-client";
 import { useDataStoreContext } from "./_Providers/DataStoreProvider";
 import { CommandBar } from "./CommandBar/CommandBar";
+import { LeftSidebar } from "./LeftSidebar";
 import { VimEdit } from "./NoteEdit/VimEdit";
 
 export const Editor: Component = () => {
@@ -19,16 +19,16 @@ export const Editor: Component = () => {
     },
     debounced: async (id: string, buffer: LineBuffer) => {
       const text = [...buffer.lines].join("\n");
-      await trpc.note.updateNote.mutate({ id, updateObject: { text } });
+      await trpc.note.updateById.mutate({ id, updateObject: { text } });
     },
     delay: 500,
   });
 
   return (
     <div class="flex flex-col w-full h-full">
-      <div class="w-full h-full flex flex-row gap-[1ch]">
+      <div class="w-full h-full flex flex-row bg-dn-gray-dark">
         <Show when={leftSidebarOpen()}>
-          <Browser classList={{ "w-[30ch] shrink-0": true }} />
+          <LeftSidebar classList={{ "w-[30ch] shrink-0": true }} />
         </Show>
         <Show when={store.editor.getSelectedNote()} keyed fallback={"Error..."}>
           {(note) => {

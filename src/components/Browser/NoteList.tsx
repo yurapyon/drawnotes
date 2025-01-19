@@ -38,14 +38,14 @@ export const NoteList: Component = () => {
             <div
               class="select-none"
               classList={{
-                "bg-gray-200 cursor-auto": isSelected(),
-                "hover:bg-gray-200 cursor-pointer": true,
+                "bg-dn-gray-light cursor-auto": isSelected(),
+                "hover:bg-dn-gray cursor-pointer": !isSelected(),
               }}
               onClick={() => {
                 selectNote(note().id);
               }}
             >
-              {note().title || <span class="text-gray-500">untitled</span>}
+              {note().title || <span class="text-dn-gray-light">untitled</span>}
             </div>
           );
         }}
