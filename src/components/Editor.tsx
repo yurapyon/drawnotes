@@ -1,5 +1,4 @@
 import { Component, Show } from "solid-js";
-import { ImageViewer } from "~/components/ImageViewer/ImageViewer";
 import { LineBuffer } from "~/lib/editor/LineBuffer";
 import { useAutosave } from "~/lib/Hooks/useAutosave";
 import { trpc } from "~/lib/trpc-client";
@@ -43,9 +42,11 @@ export const Editor: Component = () => {
             );
           }}
         </Show>
+        {/*
         <Show when={rightSidebarOpen()}>
           <ImageViewer classList={{ "w-[50ch] shrink-0": true }} />
         </Show>
+           */}
       </div>
       <CommandBar />
     </div>

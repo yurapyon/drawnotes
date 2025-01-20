@@ -1,3 +1,4 @@
+import { Image } from "@prisma/client";
 import {
   Component,
   createEffect,
@@ -62,6 +63,10 @@ export const VimEdit: Component<VimEditProps> = (props) => {
     console.log(props.buffer);
   });
 
+  const onImageUpload = async (image: Image) => {
+    store.images.addImageOnClient(image);
+  };
+
   return (
     <div
       class="relative group focus:outline-none overflow-y-auto w-full h-full"
@@ -78,6 +83,7 @@ export const VimEdit: Component<VimEditProps> = (props) => {
               lineNumber={i}
               pad={lineNumberPad()}
               mode={mode()}
+              onImageUpload={onImageUpload}
             />
           )}
         </Index>

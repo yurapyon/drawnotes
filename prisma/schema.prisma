@@ -47,6 +47,7 @@ model Image {
 
   id     String @id @default(uuid())
   url    String
+  name   String 
 
   user   User   @relation(fields: [userId], references: [id])
   userId String

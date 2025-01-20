@@ -1,5 +1,11 @@
 import { Title } from "@solidjs/meta";
-import { createResource, onMount, Show, type Component } from "solid-js";
+import {
+  createEffect,
+  createResource,
+  onMount,
+  Show,
+  type Component,
+} from "solid-js";
 import { useDataStoreContext } from "~/components/_Providers/DataStoreProvider";
 import { Editor } from "~/components/Editor";
 import { EditingMode } from "~/lib/editor/Editor";
@@ -10,8 +16,13 @@ const Dashboard: Component = () => {
 
   const [initialLoad] = createResource(async () => {
     await store.notes.loadNotes();
+    await store.images.loadImages();
     const settings = await trpc.user.getUserSettings.query();
     store.editor.setCurrentNoteId(settings.lastEditedNoteId);
+  });
+
+  createEffect(() => {
+    console.log(store._store.images.images);
   });
 
   onMount(() => {

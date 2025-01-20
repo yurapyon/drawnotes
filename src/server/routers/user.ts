@@ -10,6 +10,9 @@ export const userRouter = router({
       select: {
         lastEditedNoteId: true,
         useVimMode: true,
+        _count: {
+          select: { images: true },
+        },
       },
     });
 
@@ -36,16 +39,16 @@ export const userRouter = router({
       });
     }),
 
-  getTags: protectedProcedure.input(z.undefined()).query(async ({ ctx }) => {
+  getTags: protectedProcedure.query(async ({ ctx }) => {
     const tags = await prisma.user.findUnique({
       where: { id: ctx.session.user.id },
-      include: { tags: true },
+      select: { tags: true },
     });
 
     if (!tags) {
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
 
-    return tags;
+    return tags.tags;
   }),
 });

@@ -1,15 +1,21 @@
+import type { Image } from "@prisma/client";
 import { Component, Show } from "solid-js";
 import { EditingMode } from "~/lib/editor/Editor";
-import { Line } from "~/lib/editor/LineBuffer";
+import { Line } from "~/lib/editor/Line";
+import { useDataStoreContext } from "../_Providers/DataStoreProvider";
+import { UploadButton } from "../_UI/UploadButton";
 
 interface LineProps {
   line: Line;
   lineNumber: number;
   pad: number;
   mode: EditingMode;
+  onImageUpload: (image: Image) => void;
 }
 
 export const LineComponent: Component<LineProps> = (props) => {
+  const store = useDataStoreContext();
+
   const lineNumber = () => {
     const actualPad = Math.max(2, props.pad);
     return props.lineNumber.toString().padStart(actualPad, "0");
@@ -47,12 +53,28 @@ export const LineComponent: Component<LineProps> = (props) => {
       <Show when={props.line.type === "image" && props.line}>
         {(line) => {
           return (
-            <div
-              style={{
-                height: `${line().height}lh`,
-                width: `${line().height}lh`,
+            <Show
+              when={line().id}
+              fallback={
+                <div>
+                  <UploadButton onFileUpload={props.onImageUpload} />
+                </div>
+              }
+            >
+              {(id) => {
+                const url = () => store.images.getImageByName(id())?.url;
+                return (
+                  <div
+                    style={{
+                      height: `${line().height}lh`,
+                      // width: `${line().height}lh`,
+                    }}
+                  >
+                    <img class="block h-full" src={url()} />
+                  </div>
+                );
               }}
-            ></div>
+            </Show>
           );
         }}
       </Show>

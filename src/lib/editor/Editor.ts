@@ -1,5 +1,6 @@
 import { isCharacterKey } from "../utils/keyboardUtils";
 import { Cursor } from "./Cursor";
+import { Line } from "./Line";
 import { LineBuffer } from "./LineBuffer";
 import { Selection } from "./Selection";
 
@@ -82,16 +83,16 @@ export namespace Editor {
       if (y === 0) {
         // do nothing
       } else {
-        const currentLine = LineBuffer.stringFromLine(buffer.lines[y]);
-        const targetLine = LineBuffer.stringFromLine(buffer.lines[y - 1]);
-        const newLine = LineBuffer.lineFromString(targetLine + currentLine);
+        const currentLine = Line.stringFromLine(buffer.lines[y]);
+        const targetLine = Line.stringFromLine(buffer.lines[y - 1]);
+        const newLine = Line.lineFromString(targetLine + currentLine);
         buffer.lines.splice(y - 1, 2, newLine);
         Cursor.setX(e.cursor, targetLine.length);
         moveCursorY(e, buffer, -1);
       }
     } else {
-      const currentLine = LineBuffer.stringFromLine(buffer.lines[y]);
-      buffer.lines[y] = LineBuffer.lineFromString(
+      const currentLine = Line.stringFromLine(buffer.lines[y]);
+      buffer.lines[y] = Line.lineFromString(
         currentLine.substring(0, x - 1) + currentLine.substring(x)
       );
       moveCursorX(e, buffer, -1);

@@ -16,6 +16,11 @@ import {
   EditorSliceAPI,
 } from "./slices/editor";
 import {
+  createImageSlice,
+  createImageSliceAPI,
+  ImageSliceAPI,
+} from "./slices/image";
+import {
   createNoteSlice,
   createNoteSliceAPI,
   NoteSliceAPI,
@@ -30,6 +35,7 @@ export interface DataStoreAPI {
   editor: EditorSliceAPI;
   notes: NoteSliceAPI;
   autosave: AutosaveSliceAPI;
+  images: ImageSliceAPI;
 }
 
 export const createDataStore = () => {
@@ -38,6 +44,7 @@ export const createDataStore = () => {
     editor: createEditorSliceAPI(),
     notes: createNoteSliceAPI(),
     autosave: createAutosaveSliceAPI(),
+    images: createImageSliceAPI(),
   });
 
   const functions = {
@@ -45,6 +52,7 @@ export const createDataStore = () => {
     editor: createEditorSlice(createStore(store.editor)),
     notes: createNoteSlice(createStore(store.notes)),
     autosave: createAutosaveSlice(createStore(store.autosave)),
+    images: createImageSlice(createStore(store.images)),
   };
 
   const getSelectedNote = () => {
@@ -80,6 +88,15 @@ export const createDataStore = () => {
   };
 
   return {
+    /**
+     * @deprecated Only use for debugging
+     */
+    _store: store,
+    /**
+     * @deprecated Only use for debugging
+     */
+    _setStore: setStore,
+
     ...functions,
     editor: { ...functions.editor, ...editorIntegrations },
   };

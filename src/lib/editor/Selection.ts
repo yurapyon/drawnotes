@@ -1,5 +1,5 @@
 import { Maths } from "../utils/maths";
-import { Line } from "./LineBuffer";
+import { Line } from "./Line";
 
 export enum SelectionDireciton {
   None = "none",

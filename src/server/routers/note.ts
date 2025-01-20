@@ -26,6 +26,7 @@ export const noteRouter = router({
     .input(z.object({ id: z.string(), updateObject: NoteSchema.partial() }))
     .mutation(async ({ input, ctx }) => {
       const userId = ctx.session.user.id;
+      // TODO do something with update error, ie if userId is wrong
       await prisma.note.update({
         where: { id: input.id, userId },
         data: { ...input.updateObject },

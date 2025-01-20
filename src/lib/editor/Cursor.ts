@@ -1,5 +1,5 @@
 import { Maths } from "../utils/maths";
-import { Line } from "./LineBuffer";
+import { Line } from "./Line";
 
 // Differences from Vim
 //   Cursor can always be at line.length
@@ -51,12 +51,7 @@ export namespace Cursor {
     } else {
       const x = c.actual.x;
       const y = lines.slice(0, c.actual.y).reduce((acc, line) => {
-        switch (line.type) {
-          case "string":
-            return acc + 1;
-          case "image":
-            return acc + line.height + 1;
-        }
+        return acc + Line.height(line);
       }, 0);
       return { x, y };
     }
