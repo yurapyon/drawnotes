@@ -1,4 +1,5 @@
 import { Maths } from "../utils/maths";
+import { Line } from "./LineBuffer";
 
 export enum SelectionDireciton {
   None = "none",
@@ -26,20 +27,20 @@ export namespace Selection {
 
   export const copy = (
     s: Selection,
-    lines: string[],
+    lines: Line[],
     copyFullLines: boolean
   ): string[] => {
     const { start, end } = getBounds(s);
     if (copyFullLines) {
       start.x = 0;
-      end.x = lines[end.y].length;
+      end.x = lines[end.y].str.length;
     }
 
     // TODO
     return [];
   };
 
-  export const cut = (s: Selection, lines: string[], cutFullLines: boolean) => {
+  export const cut = (s: Selection, lines: Line[], cutFullLines: boolean) => {
     const copiedLines = copy(s, lines, cutFullLines);
     const newLines = [""];
     // TODO

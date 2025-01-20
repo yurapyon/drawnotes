@@ -1,13 +1,13 @@
 import { Component } from "solid-js";
 import { ClassProps } from "../_misc/ClassProps";
 
-interface CursorProps extends ClassProps {
+interface CursorComponentProps extends ClassProps {
   x: number;
   y: number;
   cursorClassList: Record<string, boolean | undefined>;
 }
 
-export const Cursor: Component<CursorProps> = (props) => {
+export const CursorComponent: Component<CursorComponentProps> = (props) => {
   return (
     <div
       class="w-[1ch] h-[1lh]"

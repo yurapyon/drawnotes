@@ -18,15 +18,15 @@ export const Editor: Component = () => {
       store.notes.updateNote(id, { lineBuffer: buffer });
     },
     debounced: async (id: string, buffer: LineBuffer) => {
-      const text = [...buffer.lines].join("\n");
+      const text = LineBuffer.toText(buffer);
       await trpc.note.updateById.mutate({ id, updateObject: { text } });
     },
     delay: 500,
   });
 
   return (
-    <div class="flex flex-col w-full h-full">
-      <div class="w-full h-full flex flex-row bg-dn-gray-dark">
+    <div class="flex flex-col w-full h-full bg-dn-gray-darker">
+      <div class="w-full h-full flex flex-row">
         <Show when={leftSidebarOpen()}>
           <LeftSidebar classList={{ "w-[30ch] shrink-0": true }} />
         </Show>

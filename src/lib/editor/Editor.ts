@@ -4,6 +4,7 @@ import { LineBuffer } from "./LineBuffer";
 import { Selection } from "./Selection";
 
 export enum EditingMode {
+  ViewOnly = "view-only",
   Normal = "normal",
   Insert = "insert",
   Visual = "visual",
@@ -56,6 +57,8 @@ export namespace Editor {
   };
 
   export const cut = (e: Editor, buffer: LineBuffer) => {
+    // TODO
+    /*
     if (e.selection) {
       const { copiedLines, newLines } = Selection.cut(
         e.selection,
@@ -65,6 +68,7 @@ export namespace Editor {
       buffer.lines = newLines;
       return copiedLines;
     }
+    */
   };
 
   export const paste = (e: Editor, buffer: LineBuffer, text: string) => {
@@ -78,17 +82,18 @@ export namespace Editor {
       if (y === 0) {
         // do nothing
       } else {
-        const currentLine = buffer.lines[y];
-        const targetLine = buffer.lines[y - 1];
-        const newLine = targetLine + currentLine;
+        const currentLine = LineBuffer.stringFromLine(buffer.lines[y]);
+        const targetLine = LineBuffer.stringFromLine(buffer.lines[y - 1]);
+        const newLine = LineBuffer.lineFromString(targetLine + currentLine);
         buffer.lines.splice(y - 1, 2, newLine);
         Cursor.setX(e.cursor, targetLine.length);
         moveCursorY(e, buffer, -1);
       }
     } else {
-      const currentLine = buffer.lines[y];
-      buffer.lines[y] =
-        currentLine.substring(0, x - 1) + currentLine.substring(x);
+      const currentLine = LineBuffer.stringFromLine(buffer.lines[y]);
+      buffer.lines[y] = LineBuffer.lineFromString(
+        currentLine.substring(0, x - 1) + currentLine.substring(x)
+      );
       moveCursorX(e, buffer, -1);
     }
   };
@@ -125,6 +130,17 @@ export namespace Editor {
     ev.preventDefault();
 
     switch (e.mode) {
+      case EditingMode.ViewOnly:
+        {
+          switch (ev.key) {
+            case "Escape":
+              e.mode = EditingMode.Normal;
+              wasHandled = true;
+              wasChanged.mode = true;
+              break;
+          }
+        }
+        break;
       case EditingMode.Normal:
         {
           switch (ev.key) {
@@ -147,6 +163,11 @@ export namespace Editor {
               moveCursorX(e, buffer, 1);
               wasHandled = true;
               wasChanged.cursor = true;
+              break;
+            case "q":
+              e.mode = EditingMode.ViewOnly;
+              wasHandled = true;
+              wasChanged.mode = true;
               break;
             case "O":
               insertBlankLine(e, buffer, true);
@@ -171,7 +192,7 @@ export namespace Editor {
               break;
             case "A":
               const currentLine = buffer.lines[e.cursor.actual.y];
-              Cursor.setX(e.cursor, currentLine.length);
+              Cursor.setX(e.cursor, currentLine.str.length);
               e.mode = EditingMode.Insert;
               wasHandled = true;
               wasChanged.cursor = true;
