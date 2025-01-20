@@ -2,7 +2,7 @@ import { Note } from "@prisma/client";
 import { Component, Show } from "solid-js";
 import { useAutosave } from "~/lib/Hooks/useAutosave";
 import { trpc } from "~/lib/trpc-client";
-import { formatDate } from "~/lib/utils/formatDate";
+import { formatDate } from "~/lib/utils/dates";
 import { ClassProps } from "../_misc/ClassProps";
 import { useDataStoreContext } from "../_Providers/DataStoreProvider";
 import { NameEditor } from "../_UI/NameEditor";

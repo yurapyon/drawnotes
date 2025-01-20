@@ -25,11 +25,17 @@ export const createImageSlice = (
 
   return {
     loadImages,
+    getImages: () => {
+      return store.images;
+    },
     addImageOnClient: (image: Image) => {
       setStore("images", (previousImages) => [...previousImages, image]);
     },
     getImageByName: (name: string) => {
       return store.images.find((image) => image.name === name);
+    },
+    updateImage: (id: string, updateObject: Partial<Image>) => {
+      setStore("images", (image) => image.id === id, updateObject);
     },
   };
 };

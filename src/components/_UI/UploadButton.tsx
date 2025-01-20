@@ -6,18 +6,19 @@ import { Button } from "./Button";
 
 interface UploadButtonProps {
   // TODO route
-  onFileUpload: (image: Image) => void;
+  uploadName: string;
+  onUpload: (image: Image) => void;
 }
 
 export const UploadButton: Component<UploadButtonProps> = (props) => {
-  const ut = uploadthingClient.createUploadThing("imageUploader", {
+  const ut = uploadthingClient.createUploadThing("image", {
     onClientUploadComplete: (val) => {
       const createdAt = new Date();
       const image = {
         ...val[0].serverData.image,
         createdAt,
       };
-      props.onFileUpload(image);
+      props.onUpload(image);
     },
   });
 
@@ -27,7 +28,7 @@ export const UploadButton: Component<UploadButtonProps> = (props) => {
         onClick={() =>
           openFileDialog(
             "image/png;image/jpg",
-            (fl) => fl && ut.startUpload([...fl])
+            (fl) => fl && ut.startUpload([...fl], { name: props.uploadName })
           )
         }
       >

@@ -22,7 +22,7 @@ const Dashboard: Component = () => {
   });
 
   createEffect(() => {
-    console.log(store._store.images.images);
+    // console.log(store._store.images.images);
   });
 
   onMount(() => {

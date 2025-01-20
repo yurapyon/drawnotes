@@ -45,13 +45,17 @@ export namespace Cursor {
     }
   };
 
-  export const actualXYInLines = (c: Cursor, lines: Line[]) => {
+  export const actualXYInLines = (
+    c: Cursor,
+    lines: Line[],
+    validUploadNames: string[]
+  ) => {
     if (lines.every((line) => line.type === "string")) {
       return c.actual;
     } else {
       const x = c.actual.x;
       const y = lines.slice(0, c.actual.y).reduce((acc, line) => {
-        return acc + Line.height(line);
+        return acc + Line.height(line, validUploadNames);
       }, 0);
       return { x, y };
     }

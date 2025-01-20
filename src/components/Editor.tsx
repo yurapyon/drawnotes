@@ -4,6 +4,7 @@ import { useAutosave } from "~/lib/Hooks/useAutosave";
 import { trpc } from "~/lib/trpc-client";
 import { useDataStoreContext } from "./_Providers/DataStoreProvider";
 import { CommandBar } from "./CommandBar/CommandBar";
+import { ImageViewer } from "./ImageViewer/ImageViewer";
 import { LeftSidebar } from "./LeftSidebar";
 import { VimEdit } from "./NoteEdit/VimEdit";
 
@@ -42,11 +43,9 @@ export const Editor: Component = () => {
             );
           }}
         </Show>
-        {/*
         <Show when={rightSidebarOpen()}>
-          <ImageViewer classList={{ "w-[50ch] shrink-0": true }} />
+          <ImageViewer classList={{ "w-[60ch] shrink-0": true }} />
         </Show>
-           */}
       </div>
       <CommandBar />
     </div>

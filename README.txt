@@ -3,15 +3,20 @@ a notes app
 
 the idea:
   app for what i use notion for, without being notion
-  vim editing
+  vim style editing
+  image upload
 
 todo:
   mobile web support
-  image upload/drawing
+
+maybe:
+  drawing
 
 uses:
-  SolidStart
+  solidstart
   trpc
   prisma
+  better auth
+  uploadthing
 
 MIT

@@ -1,11 +1,5 @@
 import { Image } from "@prisma/client";
-import {
-  Component,
-  createEffect,
-  createSignal,
-  Index,
-  onMount,
-} from "solid-js";
+import { Component, createSignal, Index, onMount } from "solid-js";
 import { Cursor } from "~/lib/editor/Cursor";
 import { EditingMode, Editor } from "~/lib/editor/Editor";
 import { LineBuffer } from "~/lib/editor/LineBuffer";
@@ -35,9 +29,15 @@ export const VimEdit: Component<VimEditProps> = (props) => {
 
   const lineNumberPad = () => Math.ceil(Math.log10(props.buffer.lines.length));
   const mode = () => store.editor.getMode();
+  const validUploadNames = () =>
+    store.images.getImages().map((image) => image.name);
 
   const actualCursorLocation = () =>
-    Cursor.actualXYInLines(localCursor(), props.buffer.lines);
+    Cursor.actualXYInLines(
+      localCursor(),
+      props.buffer.lines,
+      validUploadNames()
+    );
 
   const onKeyDown = (e: KeyboardEvent) => {
     const copiedBuffer: LineBuffer = {
@@ -59,11 +59,7 @@ export const VimEdit: Component<VimEditProps> = (props) => {
     }
   };
 
-  createEffect(() => {
-    console.log(props.buffer);
-  });
-
-  const onImageUpload = async (image: Image) => {
+  const onUpload = async (image: Image) => {
     store.images.addImageOnClient(image);
   };
 
@@ -83,7 +79,7 @@ export const VimEdit: Component<VimEditProps> = (props) => {
               lineNumber={i}
               pad={lineNumberPad()}
               mode={mode()}
-              onImageUpload={onImageUpload}
+              onUpload={onUpload}
             />
           )}
         </Index>
