@@ -24,7 +24,7 @@ export const NameEditor: ParentComponent<NameEditorProps> = (props) => {
 
   return (
     <div
-      class="flex flex-row"
+      class="flex"
       classList={{
         "flex-row": !props.reverseUI,
         "flex-row-reverse": !!props.reverseUI,
@@ -33,7 +33,7 @@ export const NameEditor: ParentComponent<NameEditorProps> = (props) => {
       }}
     >
       <Show when={!isEditing()}>
-        <div class="grow min-h-0">{props.children}</div>
+        <div class="grow min-w-0">{props.children}</div>
         <Button
           onClick={() => {
             setLocalValue(props.value);
@@ -46,7 +46,7 @@ export const NameEditor: ParentComponent<NameEditorProps> = (props) => {
       <Show when={isEditing()}>
         <TextInput
           ref={textInput}
-          classList={{ "grow min-h-0": true }}
+          classList={{ "grow min-w-0": true }}
           value={localValue()}
           onInput={(e) => {
             setLocalValue(e.target.value);

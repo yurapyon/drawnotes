@@ -1,13 +1,11 @@
 import { Note, Tag } from "@prisma/client";
 import { useRequiredAuth } from "~/components/_Providers/RequiredAuthProvider";
-import { LineBuffer } from "~/lib/editor/LineBuffer";
 import { trpc } from "~/lib/trpc-client";
 import { createId } from "~/lib/utils/createId";
 import { CreateStoreReturn } from "../DataStore";
 
 interface ClientSideNode extends Note {
   tags: Tag[];
-  lineBuffer: LineBuffer;
 }
 
 export interface NoteSliceAPI {
@@ -31,17 +29,7 @@ export const createNoteSlice = (
   const loadNotes = async () => {
     if (store.notes === null) {
       const notes = await trpc.note.getAllWithTags.query();
-      const notesWithBuffers = notes.map((note) => {
-        const newNote = {
-          ...note,
-          lineBuffer: LineBuffer.create(),
-        };
-
-        LineBuffer.setFromText(newNote.lineBuffer, note.text);
-
-        return newNote;
-      });
-      setStore("notes", notesWithBuffers);
+      setStore("notes", notes);
     }
   };
 
@@ -58,9 +46,7 @@ export const createNoteSlice = (
         userId: session.user.id,
         tags: [],
         createdAt: new Date(),
-        lineBuffer: LineBuffer.create(),
       };
-      LineBuffer.setFromText(newNote.lineBuffer, "");
       setStore((previousStore) => {
         if (previousStore.notes === null) {
           return previousStore;

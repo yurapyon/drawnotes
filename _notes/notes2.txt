@@ -5,3 +5,4 @@ rename images to uploads
 use signup hook to seed user info
 
 vscode settings dont autodelete unreachable code
+auto async

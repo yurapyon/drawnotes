@@ -17,6 +17,7 @@ const Dashboard: Component = () => {
   const [initialLoad] = createResource(async () => {
     await store.notes.loadNotes();
     await store.images.loadImages();
+    await store.tags.loadTags();
     const settings = await trpc.user.getUserSettings.query();
     store.editor.setCurrentNoteId(settings.lastEditedNoteId);
   });

@@ -1,6 +1,5 @@
 import { Component, Show } from "solid-js";
 import { useAutosave } from "~/lib/_Hooks/useAutosave";
-import { LineBuffer } from "~/lib/editor/LineBuffer";
 import { trpc } from "~/lib/trpc-client";
 import { useDataStoreContext } from "./_Providers/DataStoreProvider";
 import { CommandBarComponent } from "./CommandBar/CommandBar";
@@ -14,14 +13,12 @@ export const Editor: Component = () => {
   const [leftSidebarOpen, rightSidebarOpen] = store.editor.getSidebarState();
 
   const updateNoteText = useAutosave({
-    immediate: async (id: string, buffer: LineBuffer) => {
-      store.notes.updateNote(id, { lineBuffer: buffer });
+    immediate: async (id: string, text: string) => {
+      store.notes.updateNote(id, { text });
     },
-    debounced: async (id: string, buffer: LineBuffer) => {
-      const text = LineBuffer.toText(buffer);
+    debounced: async (id: string, text: string) => {
       await trpc.note.updateById.mutate({ id, updateObject: { text } });
     },
-    delay: 500,
   });
 
   return (
@@ -36,8 +33,8 @@ export const Editor: Component = () => {
               <div class="flex flex-col w-full h-full">
                 <VimEdit
                   classList={{ "w-full grow min-h-0": true }}
-                  buffer={note.lineBuffer}
-                  onBufferChange={(buffer) => updateNoteText(note.id, buffer)}
+                  initialText={note.text}
+                  onTextChange={(text) => updateNoteText(note.id, text)}
                 />
               </div>
             );

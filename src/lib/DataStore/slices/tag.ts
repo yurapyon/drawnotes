@@ -8,6 +8,12 @@ export interface TagSliceAPI {
   tags: Tag[];
 }
 
+export const createTagSliceAPI = (): TagSliceAPI => {
+  return {
+    tags: [],
+  };
+};
+
 export const createTagSlice = (
   storeSetStore: CreateStoreReturn<TagSliceAPI>
 ) => {
@@ -30,10 +36,19 @@ export const createTagSlice = (
         name: "",
         color: "#808080",
       };
+      setStore("tags", (previousTags) => {
+        return [...previousTags, newTag];
+      });
       return newTag;
     },
     getTags: () => {
       return store.tags;
+    },
+    getTagById: (id: string) => {
+      return store.tags.find((tag) => tag.id === id);
+    },
+    updateTagById: (id: string, updateObject: Partial<Tag>) => {
+      setStore("tags", (tag) => tag.id === id, updateObject);
     },
   };
 };

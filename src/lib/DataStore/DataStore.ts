@@ -1,5 +1,6 @@
 import { createStore } from "solid-js/store";
 import { Maths } from "../utils/maths";
+import { jsonFromDataStore } from "./export";
 import {
   AutosaveSliceAPI,
   createAutosaveSlice,
@@ -25,34 +26,38 @@ import {
   createNoteSliceAPI,
   NoteSliceAPI,
 } from "./slices/note";
+import { createTagSlice, createTagSliceAPI, TagSliceAPI } from "./slices/tag";
 
 export type CreateStoreReturn<T extends object> = ReturnType<
   typeof createStore<T>
 >;
 
 export interface DataStoreAPI {
+  autosave: AutosaveSliceAPI;
   commands: CommandSliceAPI;
   editor: EditorSliceAPI;
-  notes: NoteSliceAPI;
-  autosave: AutosaveSliceAPI;
   images: ImageSliceAPI;
+  notes: NoteSliceAPI;
+  tags: TagSliceAPI;
 }
 
 export const createDataStore = () => {
   const [store, setStore] = createStore<DataStoreAPI>({
+    autosave: createAutosaveSliceAPI(),
     commands: createCommandSliceAPI(),
     editor: createEditorSliceAPI(),
-    notes: createNoteSliceAPI(),
-    autosave: createAutosaveSliceAPI(),
     images: createImageSliceAPI(),
+    notes: createNoteSliceAPI(),
+    tags: createTagSliceAPI(),
   });
 
   const functions = {
+    autosave: createAutosaveSlice(createStore(store.autosave)),
     commands: createCommandSlice(createStore(store.commands)),
     editor: createEditorSlice(createStore(store.editor)),
-    notes: createNoteSlice(createStore(store.notes)),
-    autosave: createAutosaveSlice(createStore(store.autosave)),
     images: createImageSlice(createStore(store.images)),
+    notes: createNoteSlice(createStore(store.notes)),
+    tags: createTagSlice(createStore(store.tags)),
   };
 
   const getSelectedNote = () => {
@@ -87,7 +92,12 @@ export const createDataStore = () => {
     },
   };
 
+  const toJSON = () => {
+    return jsonFromDataStore(store);
+  };
+
   return {
+    ...functions,
     /**
      * @deprecated Only use for debugging
      */
@@ -96,9 +106,8 @@ export const createDataStore = () => {
      * @deprecated Only use for debugging
      */
     _setStore: setStore,
-
-    ...functions,
     editor: { ...functions.editor, ...editorIntegrations },
+    toJSON,
   };
 };
 

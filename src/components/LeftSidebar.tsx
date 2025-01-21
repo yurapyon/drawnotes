@@ -18,7 +18,7 @@ export const LeftSidebar: Component<LeftSidebarProps> = (props) => {
         ...props.classList,
       }}
     >
-      <div class="grow min-h-0">
+      <div class="w-full grow min-h-0">
         <Show when={!showSettings()}>
           <Browser classList={{ "w-full h-full": true }} />
         </Show>
