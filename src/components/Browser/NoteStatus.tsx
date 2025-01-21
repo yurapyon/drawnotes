@@ -1,6 +1,6 @@
 import { Note } from "@prisma/client";
 import { Component, Show } from "solid-js";
-import { useAutosave } from "~/lib/Hooks/useAutosave";
+import { useAutosave } from "~/lib/_Hooks/useAutosave";
 import { trpc } from "~/lib/trpc-client";
 import { formatDate } from "~/lib/utils/dates";
 import { ClassProps } from "../_misc/ClassProps";

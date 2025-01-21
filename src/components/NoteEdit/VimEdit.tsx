@@ -1,5 +1,5 @@
 import { Image } from "@prisma/client";
-import { Component, createSignal, Index, onMount } from "solid-js";
+import { Component, createSignal, For, onMount } from "solid-js";
 import { Cursor } from "~/lib/editor/Cursor";
 import { EditingMode, Editor } from "~/lib/editor/Editor";
 import { LineBuffer } from "~/lib/editor/LineBuffer";
@@ -39,12 +39,16 @@ export const VimEdit: Component<VimEditProps> = (props) => {
       validUploadNames()
     );
 
-  const onKeyDown = (e: KeyboardEvent) => {
+  const onKeyDown = async (e: KeyboardEvent) => {
     const copiedBuffer: LineBuffer = {
       ...props.buffer,
       lines: [...props.buffer.lines],
     };
-    const { wasChanged } = Editor.handleKeyboardEvent(editor, e, copiedBuffer);
+    const { wasChanged } = await Editor.handleKeyboardEvent(
+      editor,
+      e,
+      copiedBuffer
+    );
     if (wasChanged.buffer) {
       props.onBufferChange(copiedBuffer);
     }
@@ -72,17 +76,19 @@ export const VimEdit: Component<VimEditProps> = (props) => {
       tabIndex={0}
     >
       <div class="absolute w-full text-white z-10">
-        <Index each={props.buffer.lines}>
-          {(line, i) => (
-            <LineComponent
-              line={line()}
-              lineNumber={i}
-              pad={lineNumberPad()}
-              mode={mode()}
-              onUpload={onUpload}
-            />
-          )}
-        </Index>
+        <For each={props.buffer.lines}>
+          {(line, i) => {
+            return (
+              <LineComponent
+                line={line}
+                lineNumber={i()}
+                pad={lineNumberPad()}
+                mode={mode()}
+                onUpload={onUpload}
+              />
+            );
+          }}
+        </For>
       </div>
       <CursorComponent
         classList={{ absolute: true }}

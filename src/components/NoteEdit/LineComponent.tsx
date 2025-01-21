@@ -1,7 +1,7 @@
 import type { Image } from "@prisma/client";
-import { Component, Show } from "solid-js";
+import { Component, Match, Switch } from "solid-js";
 import { EditingMode } from "~/lib/editor/Editor";
-import { Line, LineType } from "~/lib/editor/Line";
+import { Line, LineType, UploadLine, YoutubeLine } from "~/lib/editor/Line";
 import { UploadLineComponent } from "./Lines/UploadLineComponent";
 import { YoutubeLineComponent } from "./Lines/YoutubeLineComponent";
 
@@ -48,16 +48,20 @@ export const LineComponent: Component<LineProps> = (props) => {
         {trimmed()}
         <div class="text-blue-300">{whitespace()}</div>
       </div>
-      <Show when={props.line.type === LineType.Upload && props.line}>
-        {(line) => (
-          <UploadLineComponent line={line()} onUpload={props.onUpload} />
-        )}
-      </Show>
-      <Show when={props.line.type === LineType.Youtube && props.line}>
-        {(line) => (
-          <YoutubeLineComponent id={line().id || ""} height={line().height} />
-        )}
-      </Show>
+      <Switch>
+        <Match when={props.line.type === LineType.Upload}>
+          <UploadLineComponent
+            line={props.line as UploadLine}
+            onUpload={props.onUpload}
+          />
+        </Match>
+        <Match when={props.line.type === LineType.Youtube}>
+          <YoutubeLineComponent
+            id={(props.line as YoutubeLine).id || ""}
+            height={(props.line as YoutubeLine).height}
+          />
+        </Match>
+      </Switch>
     </div>
   );
 };

@@ -72,7 +72,7 @@ export namespace Editor {
     */
   };
 
-  export const paste = (e: Editor, buffer: LineBuffer, text: string) => {
+  const paste = (e: Editor, buffer: LineBuffer, text: string) => {
     LineBuffer.insertText(buffer, text, e.cursor.actual.x, e.cursor.actual.y);
   };
 
@@ -115,7 +115,7 @@ export namespace Editor {
     // TODO insert move cursor.x based on the whitespace of the new line
   };
 
-  export const handleKeyboardEvent = (
+  export const handleKeyboardEvent = async (
     e: Editor,
     ev: KeyboardEvent,
     buffer: LineBuffer
@@ -204,6 +204,15 @@ export namespace Editor {
               wasHandled = true;
               wasChanged.cursor = true;
               wasChanged.buffer = true;
+            case "v":
+              // TODO update this
+              if (ev.metaKey) {
+                const text = await navigator.clipboard.readText();
+                paste(e, buffer, text);
+                wasHandled = true;
+                wasChanged.cursor = true;
+                wasChanged.buffer = true;
+              }
               break;
           }
         }

@@ -1,9 +1,9 @@
 import { Component, Show } from "solid-js";
+import { useAutosave } from "~/lib/_Hooks/useAutosave";
 import { LineBuffer } from "~/lib/editor/LineBuffer";
-import { useAutosave } from "~/lib/Hooks/useAutosave";
 import { trpc } from "~/lib/trpc-client";
 import { useDataStoreContext } from "./_Providers/DataStoreProvider";
-import { CommandBar } from "./CommandBar/CommandBar";
+import { CommandBarComponent } from "./CommandBar/CommandBar";
 import { ImageViewer } from "./ImageViewer/ImageViewer";
 import { LeftSidebar } from "./LeftSidebar";
 import { VimEdit } from "./NoteEdit/VimEdit";
@@ -47,7 +47,7 @@ export const Editor: Component = () => {
           <ImageViewer classList={{ "w-[60ch] shrink-0": true }} />
         </Show>
       </div>
-      <CommandBar />
+      <CommandBarComponent onCommand={console.log} />
     </div>
   );
 };

@@ -1,9 +1,18 @@
-import { Component, createEffect } from "solid-js";
-import { trpc } from "~/lib/trpc-client";
+import { Component, createEffect, createSignal } from "solid-js";
+import { Action } from "~/lib/CommandBar/Action";
+import { CommandBar } from "~/lib/CommandBar/CommandBar";
 import { useDataStoreContext } from "../_Providers/DataStoreProvider";
 import { TextInput } from "../_UI/TextInput";
 
-export const CommandBar: Component = () => {
+interface CommandBarProps {
+  onCommand: (action: Action) => void;
+}
+
+export const CommandBarComponent: Component<CommandBarProps> = (props) => {
+  // const cb = CommandBar.create();
+
+  const [cb, setCb] = createSignal(CommandBar.create());
+
   const store = useDataStoreContext();
 
   // TODO need to handle onBlur
@@ -24,7 +33,17 @@ export const CommandBar: Component = () => {
       }}
       onKeyDown={async (e) => {
         if (e.key === "Enter") {
-          const cmd = store.commands.stopCommandEntry();
+          let str!: string;
+          setCb((previousCb) => {
+            const newCb = CommandBar.clone(previousCb);
+            str = CommandBar.stopCommandEntry(newCb);
+            return newCb;
+          });
+          const action = Action.fromString(str);
+          if (action) {
+            props.onCommand(action);
+          }
+          /*
           const command = cmd.trim();
           if (command === "new") {
             const newNote = store.notes.addNote();
@@ -32,6 +51,7 @@ export const CommandBar: Component = () => {
             store.editor.setCurrentNoteId(newNote.id);
             // TODO focus the main editor?
           }
+            */
         }
       }}
     >
